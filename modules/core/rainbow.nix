@@ -17,11 +17,13 @@ let
     HOSTNAME="nixos"
 
     print_banner() {
-      echo -e "''${MAGENTA}  ___       _       _                 ''${NC}"
-      echo -e "''${BLUE} | _ \ __ _(_)_ _  | |__  _____ __ __ ''${NC}"
-      echo -e "''${CYAN} |   // _` | | ' \ | '_ \/ _ \ V  V / ''${NC}"
-      echo -e "''${GREEN} |_|_\\__,_|_|_||_||_.__/\___/\_/\_/  ''${NC}"
-      echo -e "''${YELLOW}       NixOS Configuration CLI         ''${NC}"
+      cat << 'EOF'
+  ___       _       _                 
+ | _ \ __ _(_)_ _  | |__  _____ __ __ 
+ |   // _` | | ' \ | '_ \/ _ \ V  V / 
+ |_|_\__,_|_|_||_||_.__/\___/\_/\_/  
+       NixOS Configuration CLI         
+EOF
       echo
     }
 
