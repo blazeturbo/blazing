@@ -44,9 +44,9 @@ in {
     LC_TIME = "fr_FR.UTF-8";
   };
 
-  # Display Manager & Desktop
+  # Display Manager
   services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.enable = false;
 
   # Keyboard layout
   services.xserver.xkb = {
