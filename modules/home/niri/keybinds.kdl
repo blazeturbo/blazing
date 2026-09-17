@@ -12,9 +12,9 @@ binds {
 
     // Noctalia Integration
     Mod+Shift+D      hotkey-overlay-title="Noctalia Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Mod+M            hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia" "msg" "panel-toggle" "control-center" "notifications"; }
-    Mod+V            hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
-    Mod+Comma        hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "msg" "settings-toggle"; }
+    Mod+N            hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia" "msg" "panel-toggle" "control-center" "notifications"; }
+    Mod+Shift+V      hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    Mod+Shift+Comma  hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "msg" "settings-toggle"; }
 
     // Application Launchers
     Mod+Q            hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
