@@ -44,9 +44,21 @@ in {
     LC_TIME = "fr_FR.UTF-8";
   };
 
-  # Display Manager
-  services.displayManager.gdm.enable = true;
+  # Display Manager: Ly TUI Login Manager with Matrix animation & big clock (from ZaneyOS)
+  services.displayManager.gdm.enable = false;
   services.desktopManager.gnome.enable = false;
+  services.displayManager.ly = {
+    enable = true;
+    settings = {
+      animation = "matrix";
+      bigclock = true;
+      bg = "0x00000000";
+      fg = "0x0000FFFF";
+      border_fg = "0x00FF0000";
+      error_fg = "0x00FF0000";
+      clock_color = "#800080";
+    };
+  };
 
   # Keyboard layout
   services.xserver.xkb = {
@@ -85,6 +97,9 @@ in {
     pciutils
     fastfetch
     yazi
+    cmatrix
+    swaybg
+    power-profiles-daemon
   ];
 
   system.stateVersion = vars.stateVersion;
