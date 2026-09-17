@@ -1,0 +1,41 @@
+{
+  description = "NixOS Configuration with Niri, Stylix, and Noctalia";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs:
+  let
+    system = "x86_64-linux";
+    vars = import ./variables.nix;
+  in {
+    nixosConfigurations.${vars.hostname} = nixpkgs.lib.nixosSystem {
+      inherit system;
+      specialArgs = {
+        inherit inputs vars;
+      };
+      modules = [
+        ./hosts/nixos
+        stylix.nixosModules.stylix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = {
+            inherit inputs vars;
+          };
+          home-manager.users.${vars.username} = import ./modules/home;
+        }
+      ];
+    };
+  };
+}
