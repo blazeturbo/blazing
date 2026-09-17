@@ -1,3 +1,4 @@
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
-spawn-at-startup "noctalia"
+spawn-at-startup "swaybg" "-i" "/home/astrid/.config/nixos/wallpapers/Rainnight.jpg" "-m" "fill"
+spawn-at-startup "sh" "-c" "sleep 0.5 && systemctl --user restart noctalia || noctalia"
