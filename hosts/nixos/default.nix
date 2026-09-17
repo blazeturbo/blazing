@@ -44,19 +44,24 @@ in {
     LC_TIME = "fr_FR.UTF-8";
   };
 
-  # Display Manager: Ly TUI Login Manager with Matrix animation & big clock (from ZaneyOS)
+  # Display Manager: Ly TUI Login Manager with Matrix animation & big clock (Themed by Stylix)
   services.displayManager.gdm.enable = false;
   services.desktopManager.gnome.enable = false;
   services.displayManager.ly = {
     enable = true;
-    settings = {
+    settings = let
+      c = config.lib.stylix.colors;
+    in {
       animation = "matrix";
-      bigclock = true;
-      bg = "0x00000000";
-      fg = "0x0000FFFF";
-      border_fg = "0x00FF0000";
-      error_fg = "0x00FF0000";
-      clock_color = "#800080";
+      bigclock = "en";
+      clock = "%a %b %d %H:%M";
+      full_color = true;
+      bg = "0x00" + c.base00;
+      fg = "0x00" + c.base05;
+      border_fg = "0x00" + c.base0D;
+      error_fg = "0x01" + c.base08;
+      cmatrix_fg = "0x00" + c.base0B;
+      cmatrix_head_col = "0x01" + c.base07;
     };
   };
 
