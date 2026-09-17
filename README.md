@@ -93,9 +93,9 @@ Just like ZaneyOS provides `zcli`, this configuration includes `rainbow` for qui
 | <kbd>Mod</kbd> + <kbd>Q</kbd> / <kbd>Return</kbd> | Open Kitty Terminal |
 | <kbd>Mod</kbd> + <kbd>B</kbd> | Open Firefox |
 | <kbd>Mod</kbd> + <kbd>E</kbd> | Open File Manager |
-| <kbd>Mod</kbd> + <kbd>M</kbd> | Noctalia Notifications / Control Center |
-| <kbd>Mod</kbd> + <kbd>V</kbd> | Noctalia Clipboard History |
-| <kbd>Mod</kbd> + <kbd>,</kbd> | Noctalia Settings |
+| <kbd>Mod</kbd> + <kbd>N</kbd> | Noctalia Notifications / Control Center |
+| <kbd>Mod</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> | Noctalia Clipboard History |
+| <kbd>Mod</kbd> + <kbd>Shift</kbd> + <kbd>,</kbd> | Noctalia Settings |
 | <kbd>Mod</kbd> + <kbd>C</kbd> | Close Active Window |
 | <kbd>Mod</kbd> + <kbd>F</kbd> | Maximize Column |
 | <kbd>Mod</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Fullscreen Window |
