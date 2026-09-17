@@ -1,6 +1,17 @@
 // Niri Configuration
 prefer-no-csd
 
+// Monitor Output Settings (Samsung Odyssey G40B @ 240Hz / 239.76Hz)
+output "HDMI-A-1" {
+    mode "1920x1080@239.760"
+    variable-refresh-rate
+}
+
+output "DP-1" {
+    mode "1920x1080@239.760"
+    variable-refresh-rate
+}
+
 include "autostart.kdl"
 include "keybinds.kdl"
 include "animations.kdl"
