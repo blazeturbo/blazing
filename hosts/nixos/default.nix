@@ -8,6 +8,7 @@ in {
     ../../modules/core/nvidia.nix
     ../../modules/core/scheduler.nix
     ../../modules/core/stylix.nix
+    ../../modules/core/rainbow.nix
   ];
 
   # Allow unfree packages (required for NVIDIA drivers, etc.)
