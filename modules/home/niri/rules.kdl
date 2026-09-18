@@ -21,11 +21,8 @@ window-rule {
     clip-to-geometry true
 }
 
-// Opacity for inactive windows
-window-rule {
-    match is-active=false
-    opacity 0.9
-}
+// No dimming for inactive windows: focused and unfocused look identical.
+// (Focus behavior itself is untouched, this is purely cosmetic.)
 
 // Background effect for all windows
 window-rule {
