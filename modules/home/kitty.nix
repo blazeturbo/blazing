@@ -9,16 +9,6 @@
     enable = true;
 
     settings = {
-      # Hardcoded look: light gray background that NEVER follows Stylix
-      # (the one exempted surface on this system). Foreground is dark
-      # so text stays readable on it; everything else keeps palette colors.
-      background = "#8b919d";
-      foreground = "#121d23";
-      cursor = "#121d23";
-      cursor_text_color = "#8b919d";
-      selection_background = "#121d23";
-      selection_foreground = "#8b919d";
-      background_opacity = "0.9";
       font_size = 12;
       wheel_scroll_min_lines = 1;
       window_padding_width = 4;
@@ -44,6 +34,11 @@
     shellIntegration.mode = "enabled";
 
     extraConfig = ''
+
+      # Pinned gray background: the ONE thing in kitty that ignores Stylix.
+      # Everything else (text, cursor, ANSI colors) follows the palette.
+      # extraConfig lands after the generated settings, so this wins.
+      background #8b919d
 
       url_prefixes file ftp ftps gemini git gopher http https irc ircs kitty sftp ssh
 
