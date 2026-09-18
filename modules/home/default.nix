@@ -19,7 +19,6 @@
     ./cli/git.nix
     ./spicetify.nix
     ./discord.nix
-    ./cava-layer
   ];
 
   programs.home-manager.enable = true;
