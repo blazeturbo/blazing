@@ -34,9 +34,9 @@ let
       b = v: clamp (l + (v - l) * 6);
     in "#${toHex2 (b p.r)}${toHex2 (b p.g)}${toHex2 (b p.b)}";
 
-  osColor = "#d4d8dc";
-  wmColor = "#d4d8dc";
-  pcColor = "#d4d8dc";
+  osColor = "#939aa3";
+  wmColor = "#939aa3";
+  pcColor = "#939aa3";
 in {
   imports = [ ./fastfetch2.nix ];
 
@@ -46,8 +46,8 @@ in {
     settings = {
       display = {
         color = {
-          keys = "#d4d8dc";
-          output = "#d4d8dc";
+          keys = "#939aa3";
+          output = "#939aa3";
         };
         separator = "➜ ";
       };
