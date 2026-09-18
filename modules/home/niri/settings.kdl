@@ -134,17 +134,11 @@ input {
     touchpad {
         tap
         natural-scroll
-        left-handed
-        accel-speed -0.4
     }
 
     mouse {
-        left-handed
-        // WAY slower: flat = no acceleration curve (predictable), and
-        // speed runs -1 (slowest) to 1 (fastest). Tune toward -1 if
-        // your mouse is high-DPI and still too fast.
-        accel-profile "flat"
-        accel-speed -0.6
+        // Stock right-handed feel. Tune here if needed:
+        // accel-profile "flat", accel-speed -1.0 (slow) to 1.0 (fast).
     }
 
     trackpoint {

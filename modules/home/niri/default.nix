@@ -21,7 +21,6 @@ in {
       spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6; do ${pkgs.awww}/bin/awww img --namespace=-backdrop ${overviewBlur} && break; sleep 1; done"
       spawn-at-startup "sh" "-c" "sleep 0.5 && systemctl --user restart noctalia || ${pkgs.noctalia}/bin/noctalia"
       spawn-at-startup "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
-      spawn-at-startup "sh" "-c" "sleep 2 && ${pkgs.input-remapper}/bin/input-remapper-control --command autoload || true"
     '';
     "niri/environment.kdl".source = ./environment.kdl;
     "niri/keybinds.kdl".source = ./keybinds.kdl;

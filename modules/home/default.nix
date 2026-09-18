@@ -66,8 +66,6 @@
     "applications/nvidia-settings.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/mpv.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/umpv.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
-    "applications/input-remapper-gtk.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
-    "applications/input-remapper-autoload.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
   };
 
   home.stateVersion = "26.05";

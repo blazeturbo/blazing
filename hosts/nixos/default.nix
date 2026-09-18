@@ -128,10 +128,6 @@ in {
     serviceConfig.Type = "oneshot";
   };
 
-  # Input remapping daemon (configure presets in the input-remapper GUI,
-  # set one to "autoload" and it loads on every login via niri autostart)
-  services.input-remapper.enable = true;
-
   # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
   environment.sessionVariables = {
     XCURSOR_THEME = "catppuccin-mocha-light-cursors";
