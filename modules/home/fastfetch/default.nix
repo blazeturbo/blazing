@@ -47,7 +47,7 @@ in {
       display = {
         color = {
           keys = boost c.base0E;
-          output = "#${c.base05}";
+          output = "#939aa3";
         };
         separator = "➜ ";
       };
