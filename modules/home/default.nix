@@ -18,6 +18,7 @@
     ./cli/eyecandy.nix
     ./cli/git.nix
     ./spicetify.nix
+    ./discord.nix
   ];
 
   programs.home-manager.enable = true;
