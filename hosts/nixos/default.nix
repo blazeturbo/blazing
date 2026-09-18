@@ -186,5 +186,9 @@ in {
     hyprpolkitagent # polkit auth dialog agent (no desktop file clutter)
   ];
 
+  # 8GB swapfile safety net (root is ext4, so this just works;
+  # NixOS creates, formats, and activates it automatically).
+  swapDevices = [{ device = "/swapfile"; size = 8 * 1024; }];
+
   system.stateVersion = vars.stateVersion;
 }
