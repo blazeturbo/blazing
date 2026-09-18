@@ -8,9 +8,9 @@ in {
     enable = true;
     settings = {
       general = {
-        # Blocky look: explicit low bar count + wide bars, centered.
-        # (auto count fills the console with thin smooth bars instead.)
-        bars = 28;
+        # Blocky look: wide bars (auto count fills whatever width fits,
+        # explicit counts error out on narrow panes instead of clipping).
+        bars = 0;
         bar_width = 3;
         bar_spacing = 1;
         center_align = 1;
