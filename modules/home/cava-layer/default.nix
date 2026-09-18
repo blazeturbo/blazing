@@ -9,7 +9,9 @@
 let
   py = pkgs.python3.withPackages (ps: [ ps.pygobject3 ]);
 
-  typelibPath = lib.makeSearchPath "lib/girepository-1.0" [
+  # NOTE: typelibs may live in a package's "out" OR "lib" output
+  # (gtk-layer-shell/vte split them out), so search both.
+  giDeps = [
     pkgs.gtk3
     pkgs.gtk-layer-shell
     pkgs.vte
@@ -18,6 +20,10 @@ let
     pkgs.atk
     pkgs.glib
     pkgs.gobject-introspection
+  ];
+  typelibPath = lib.concatStringsSep ":" [
+    (lib.makeSearchPathOutput "out" "lib/girepository-1.0" giDeps)
+    (lib.makeSearchPathOutput "lib" "lib/girepository-1.0" giDeps)
   ];
   libPath = lib.makeLibraryPath [
     pkgs.gtk3
