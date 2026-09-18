@@ -19,8 +19,10 @@ in
     height=27
   '';
 
-  # Alias so `fastfetch2` calls it (infinite spin, no frame cap)
+  # Alias so `fastfetch2` calls it: infinite spin, small logo, NO logo
+  # colors (renders in terminal foreground = monochrome, matching the
+  # gray info text; the logo's own blue/cyan are ignored).
   home.shellAliases = {
-    fastfetch2 = "fetch --infinite";
+    fastfetch2 = "fetch --infinite -l nixos_small --no-color";
   };
 }
