@@ -1,4 +1,6 @@
-{
+{ ... }: {
+  imports = [ ./fastfetch2.nix ];
+
   programs.fastfetch = {
     enable = true;
 
@@ -8,16 +10,15 @@
           keys = "35";
           output = "95";
         };
-        separator = " ➜  ";
+        separator = "➜ ";
       };
 
       logo = {
-        source = ./nixos.png;
-        type = "kitty-direct";
-        height = 10;
-        width = 20;
+        # Pinned small NixOS mark (plain string = no store path baked in).
+        # areofyl/fetch loads the same family for the spinning logo.
+        source = "nixos_small";
         padding = {
-          top = 2;
+          top = 11;
           left = 2;
         };
       };
@@ -26,14 +27,8 @@
         "break"
         {
           type = "os";
-          key = "OS";
+          key = "OS ";
           keyColor = "31";
-        }
-        {
-          type = "command";
-          key = " ├  NixOS ";
-          keyColor = "31";
-          text = "nixos-version 2>/dev/null || echo NixOS";
         }
         {
           type = "kernel";
@@ -45,15 +40,10 @@
           key = " ├ 󰏖 ";
           keyColor = "31";
         }
-        {
-          type = "shell";
-          key = " └  ";
-          keyColor = "31";
-        }
         "break"
         {
           type = "wm";
-          key = "WM   ";
+          key = "WM ";
           keyColor = "32";
         }
         {
@@ -85,7 +75,7 @@
         {
           type = "host";
           format = "{5} {1} Type {2}";
-          key = "PC   ";
+          key = "PC ";
           keyColor = "33";
         }
         {
@@ -96,7 +86,7 @@
         }
         {
           type = "gpu";
-          format = "{1} {2} @ {12} GHz";
+          format = "{1} {2}";
           key = " ├ 󰢮 ";
           keyColor = "33";
         }
@@ -109,26 +99,6 @@
           type = "disk";
           key = " ├ 󰋊 ";
           keyColor = "33";
-        }
-        {
-          type = "monitor";
-          key = " ├  ";
-          keyColor = "33";
-        }
-        {
-          type = "player";
-          key = " ├ 󰥠 ";
-          keyColor = "33";
-        }
-        {
-          type = "media";
-          key = " └ 󰝚 ";
-          keyColor = "33";
-        }
-        "break"
-        {
-          type = "uptime";
-          key = "   Uptime   ";
         }
       ];
     };

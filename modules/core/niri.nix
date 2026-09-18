@@ -12,6 +12,5 @@
   environment.systemPackages = with pkgs; [
     niri
     xwayland-satellite
-    alacritty # lightweight backup terminal
   ];
 }

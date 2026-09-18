@@ -7,11 +7,9 @@ in {
     image = stylixImage;
     polarity = "dark";
     opacity.terminal = 0.90;
-    cursor = {
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Ice";
-      size = 24;
-    };
+    # No cursor set here on purpose: the Catppuccin Mocha Light theme
+    # lives in ~/.local/share/icons and is picked up via XCURSOR_THEME
+    # (see environment.sessionVariables in hosts/nixos/default.nix).
     fonts = {
       monospace = {
         package = pkgs.nerd-fonts.jetbrains-mono;

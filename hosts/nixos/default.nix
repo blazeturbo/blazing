@@ -71,8 +71,7 @@ in {
     variant = "";
   };
 
-  # Printing & Audio
-  services.printing.enable = true;
+  # Audio (printing removed — no printer on this machine)
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -82,29 +81,69 @@ in {
     pulse.enable = true;
   };
 
+  # Enable zsh system-wide (required for it to be a valid login shell)
+  programs.zsh.enable = true;
+
   # User account
   users.users.${vars.username} = {
     isNormalUser = true;
     description = vars.username;
     extraGroups = [ "networkmanager" "wheel" "video" ];
+    shell = pkgs.zsh;
   };
 
   # Programs & System packages
   programs.nix-ld.enable = true;
-  programs.firefox.enable = true;
 
+  # Polkit: lets privileged GUIs (e.g. input-remapper) ask for auth.
+  # enablePkexecWrapper makes /run/wrappers/bin/pkexec setuid root —
+  # without it the remapper GUI dies with "pkexec must be setuid root".
+  security.polkit.enable = true;
+  security.polkit.enablePkexecWrapper = true;
+
+  # No local manual (removes the "NixOS Manual" launcher entry too)
+  documentation.nixos.enable = false;
+
+  # Lets AppImages (e.g. ~/Applications/helium-*.AppImage) actually execute.
+  # This only provides the runner — Helium itself stays a plain file in
+  # your home directory, nothing of it enters the Nix store.
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
+  # Flatpak apps support
+  services.flatpak.enable = true;
+
+  # Input remapping daemon (configure presets in the input-remapper GUI,
+  # set one to "autoload" and it loads on every login via niri autostart)
+  services.input-remapper.enable = true;
+
+  # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
+  environment.sessionVariables = {
+    XCURSOR_THEME = "catppuccin-mocha-light-cursors";
+    XCURSOR_SIZE = "24";
+  };
+
+  # NOTE: the `fastfetch` binary stays on purpose: fastfetch2 IS
+  # fastfetch-powered (its info panel + spinning logo both call it).
+  # Removing it would break fastfetch2.
   environment.systemPackages = with pkgs; [
     git
-    wget
     curl
-    killall
-    vim
-    pciutils
     fastfetch
     yazi
     cmatrix
     swaybg
-    power-profiles-daemon
+    awww # wallpaper daemon (pkgs.swww is just an alias of this)
+    eza
+    bat
+    btop
+    cava
+    tty-clock
+    lavat
+    mpv
+    hyprpolkitagent # polkit auth dialog agent (no desktop file clutter)
   ];
 
   system.stateVersion = vars.stateVersion;

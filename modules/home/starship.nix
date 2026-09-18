@@ -9,9 +9,9 @@
 in {
   programs.starship = {
     enable = true;
-    enableBashIntegration = true;
+    enableBashIntegration = false;
     enableZshIntegration = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false;
     settings = {
       add_newline = false;
       format = lib.concatStrings [

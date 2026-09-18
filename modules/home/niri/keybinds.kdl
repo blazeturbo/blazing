@@ -20,9 +20,10 @@ binds {
     Mod+Q            hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
     Mod+Return       hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
     Mod+E            hotkey-overlay-title="Open File Manager" { spawn "sh" "-c" "xdg-open \"$HOME\""; }
-    Mod+B            hotkey-overlay-title="Open Browser" { spawn "firefox"; }
+    Mod+B            hotkey-overlay-title="Open Browser: helium" { spawn "/home/astrid/Applications/helium-0.17.1.1-x86_64.AppImage" "--ozone-platform-hint=auto"; }
 
-    // Screenshots
+    // Screenshots (Noctalia screenshotter)
+    Mod+Shift+S      hotkey-overlay-title="Screenshot region" { spawn "noctalia" "msg" "screenshot-region"; }
     Print           { screenshot; }
     Ctrl+Print      { screenshot-screen; }
     Alt+Print       { screenshot-window; }
@@ -54,7 +55,6 @@ binds {
     Mod+S     { focus-column-right; }
 
     Mod+Shift+A     { move-column-left; }
-    Mod+Shift+S     { move-column-right; }
     Mod+Shift+Left  { move-column-left; }
     Mod+Shift+Down  { move-window-down; }
     Mod+Shift+Up    { move-window-up; }
@@ -125,18 +125,5 @@ binds {
     Mod+Ctrl+8 { move-column-to-workspace 8; }
     Mod+Ctrl+9 { move-column-to-workspace 9; }
 
-    // Audio - Media Controls
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 2%+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-"; }
-    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
-
-    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioPause       allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
-    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
-    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
-
-    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "2%+"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "2%-"; } 
+    // (media/brightness keys removed — playerctl/brightnessctl are gone) 
 }

@@ -1,189 +1,98 @@
-//          ___          _                 __  _           
-//         /   |  ____  (_)___ ___  ____ _/ /_(_)___  ____ 
+//          ___          _                 __  _
+//         /   |  ____  (_)___ ___  ____ _/ /_(_)___  ____
 //        / /| | / __ \/ / __ `__ \/ __ `/ __/ / __ \/ __ \
 //       / ___ |/ / / / / / / / / / /_/ / /_/ / /_/ / / / /
-//      /_/  |_/_/ /_/_/_/ /_/ /_/\__,_/\__/_/\____/_/ /_/ 
-//                                                                 
+//      /_/  |_/_/ /_/_/_/ /_/ /_/\__,_/\__/_/\____/_/ /_/
 
-// YOU CAN EDIT THIS FILE, BUT IT WILL BE OVERWRITTEN WHEN UPDATING NIRI.
-// CHANGE ANIMATION WINDOW OPEN/CLOSE YOU PREFER
+// Frosted-glass open/close, take 3: pure blur + veil + fade, NO scale
+// transform (scaling smears edge pixels). Soft 13-tap blur, gentle
+// desaturating veil, full-length fade. ~250ms each.
 
 animations {
     on
     slowdown 1.7
 
     //================================================================
-    // Window Open Animations - type "/-" for don't want to use the animation
-    // Top left corner open animation
+    // Window Open: frosted glass resolves into clarity.
     window-open {
-        duration-ms 200
+        duration-ms 150
         curve "ease-out-quad"
         custom-shader r"
-            vec4 open_circular_iris_tl(vec3 coords_geo, vec3 size_geo) {
-                vec3 coords_tex = niri_geo_to_tex * coords_geo;
-                vec2 uv = coords_tex.st;
-                
-                float p = niri_clamped_progress;
-                
-                vec2 center = vec2(0.0, 0.0);
-                
-                vec2 aspect_uv = uv - center;
-                aspect_uv.x *= size_geo.x / max(size_geo.y, 1.0);
-                
-                float dist = length(aspect_uv);
-                
-                float max_radius = length(vec2(1.0 * (size_geo.x / max(size_geo.y, 1.0)), 1.0));
-                float current_radius = max_radius * p;
-                
-                float feather = 0.03;
-                
-                if (dist > current_radius) {
-                    return vec4(0.0);
-                }
-                
-                vec4 color = texture2D(niri_tex, uv);
-                
-                float alpha = smoothstep(current_radius, current_radius - feather, dist);
-                color *= alpha;
-                
-                color *= smoothstep(0.0, 0.2, p);
-                
-                return color;
+            vec4 glass(vec3 g, vec2 px, float radius) {
+                vec2 r = px * radius;
+                vec2 r2 = r * 2.0;
+                vec4 c = texture2D(niri_tex, (niri_geo_to_tex * g).st) * 5.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, 0.0, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, 0.0, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(0.0, r.y, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(0.0, r.y, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, -r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, -r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r2.x, 0.0, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r2.x, 0.0, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(0.0, r2.y, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(0.0, r2.y, 0.0))).st) * 0.5;
+                return c / 19.0;
             }
 
             vec4 open_color(vec3 coords_geo, vec3 size_geo) {
-                return open_circular_iris_tl(coords_geo, size_geo);
-            }
-        "
-    }
-
-    // Center open animation
-    /-window-open {
-        duration-ms 200
-        curve "ease-out-quad"
-        custom-shader r"
-            vec4 open_circular_iris(vec3 coords_geo, vec3 size_geo) {
-                vec3 coords_tex = niri_geo_to_tex * coords_geo;
-                vec2 uv = coords_tex.st;
-                
                 float p = niri_clamped_progress;
-                
-                vec2 center = vec2(0.5, 0.5);
-                
-                vec2 aspect_uv = uv - center;
-                aspect_uv.x *= size_geo.x / max(size_geo.y, 1.0);
-                
-                float dist = length(aspect_uv);
-                
-                float max_radius = length(vec2(0.5 * (size_geo.x / max(size_geo.y, 1.0)), 0.5));
-                float current_radius = max_radius * p;
-                
-                float feather = 0.03;
-                
-                if (dist > current_radius) {
-                    return vec4(0.0);
-                }
-                
-                vec4 color = texture2D(niri_tex, uv);
-                
-                float alpha = smoothstep(current_radius, current_radius - feather, dist);
-                color *= alpha;
-                
-                color *= smoothstep(0.0, 0.2, p);
-                
-                return color;
-            }
 
-            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
-                return open_circular_iris(coords_geo, size_geo);
+                vec2 px = vec2(1.0 / max(size_geo.x, 1.0), 1.0 / max(size_geo.y, 1.0));
+                vec4 color = glass(coords_geo, px, (1.0 - p) * 9.0);
+
+                float frost = 1.0 - p;
+                float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                color.rgb = mix(color.rgb, vec3(luma), frost * 0.45);
+                color.rgb = mix(color.rgb * 0.9, vec3(1.0), frost * 0.28 * color.a);
+
+                color *= smoothstep(0.0, 1.0, p);
+
+                return color;
             }
         "
     }
 
     //================================================================
-    // Window Close Animations - type "/-" for don't want to use the animation
-    // Top left corner close animation
+    // Window Close: clarity sinks into frosted glass and shadow.
     window-close {
-        duration-ms 200
+        duration-ms 150
         curve "ease-out-quad"
         custom-shader r"
-            vec4 close_circular_iris_tl(vec3 coords_geo, vec3 size_geo) {
-                vec3 coords_tex = niri_geo_to_tex * coords_geo;
-                vec2 uv = coords_tex.st;
-                
-                float p = niri_clamped_progress;
-                
-                vec2 center = vec2(0.0, 0.0);
-                
-                vec2 aspect_uv = uv - center;
-                aspect_uv.x *= size_geo.x / max(size_geo.y, 1.0);
-                
-                float dist = length(aspect_uv);
-                
-                float max_radius = length(vec2(1.0 * (size_geo.x / max(size_geo.y, 1.0)), 1.0));
-                float current_radius = max_radius * (1.0 - p);
-                
-                float feather = 0.03;
-
-                if (dist > current_radius) {
-                    return vec4(0.0);
-                }
-                
-                vec4 color = texture2D(niri_tex, uv);
-                
-                float alpha = smoothstep(current_radius, current_radius - feather, dist);
-                color *= alpha;
-                
-                color *= smoothstep(1.0, 0.8, p);
-                
-                return color;
+            vec4 glass(vec3 g, vec2 px, float radius) {
+                vec2 r = px * radius;
+                vec2 r2 = r * 2.0;
+                vec4 c = texture2D(niri_tex, (niri_geo_to_tex * g).st) * 5.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, 0.0, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, 0.0, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(0.0, r.y, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(0.0, r.y, 0.0))).st) * 2.0;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r.x, -r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r.x, -r.y, 0.0))).st);
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(r2.x, 0.0, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(r2.x, 0.0, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g + vec3(0.0, r2.y, 0.0))).st) * 0.5;
+                c += texture2D(niri_tex, (niri_geo_to_tex * (g - vec3(0.0, r2.y, 0.0))).st) * 0.5;
+                return c / 19.0;
             }
 
             vec4 close_color(vec3 coords_geo, vec3 size_geo) {
-                return close_circular_iris_tl(coords_geo, size_geo);
-            }
-        "
-    }
-
-    // Center close animation
-    /-window-close {
-        duration-ms 200
-        curve "ease-out-quad"
-        custom-shader r"
-            vec4 close_circular_iris(vec3 coords_geo, vec3 size_geo) {
-                vec3 coords_tex = niri_geo_to_tex * coords_geo;
-                vec2 uv = coords_tex.st;
-                
                 float p = niri_clamped_progress;
-                
-                vec2 center = vec2(0.5, 0.5);
-                
-                vec2 aspect_uv = uv - center;
-                aspect_uv.x *= size_geo.x / max(size_geo.y, 1.0);
-                
-                float dist = length(aspect_uv);
-                
-                float max_radius = length(vec2(0.5 * (size_geo.x / max(size_geo.y, 1.0)), 0.5));
-                float current_radius = max_radius * (1.0 - p);
-                
-                float feather = 0.03;
 
-                if (dist > current_radius) {
-                    return vec4(0.0);
-                }
-                
-                vec4 color = texture2D(niri_tex, uv);
-                
-                float alpha = smoothstep(current_radius, current_radius - feather, dist);
-                color *= alpha;
-                
-                color *= smoothstep(1.0, 0.8, p);
-                
+                vec2 px = vec2(1.0 / max(size_geo.x, 1.0), 1.0 / max(size_geo.y, 1.0));
+                vec4 color = glass(coords_geo, px, p * 9.0);
+
+                float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                color.rgb = mix(color.rgb, vec3(luma), p * 0.45);
+                color.rgb = mix(color.rgb * (1.0 - 0.3 * p), vec3(1.0), p * 0.28 * color.a);
+
+                color *= 1.0 - smoothstep(0.0, 1.0, p);
+
                 return color;
-            }
-
-            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
-                return close_circular_iris(coords_geo, size_geo);
             }
         "
     }
@@ -227,4 +136,3 @@ animations {
         spring damping-ratio=1.2 stiffness=1000 epsilon=0.0001
     }
 }
-

@@ -8,10 +8,10 @@
 
   # Stylix Wallpaper (Changing this changes the system-wide color palette!)
   # Pick any wallpaper from ./wallpapers/ or add your own:
-  stylixImage = ./wallpapers/Rainnight.jpg;
+ # stylixImage = ./wallpapers/Rainnight.jpg;
   # stylixImage = ./wallpapers/AnimeGirlNightSky.jpg;
   # stylixImage = ./wallpapers/Anime-Purple-eyes.png;
-  # stylixImage = ./wallpapers/mountainscapedark.jpg;
+   stylixImage = ./wallpapers/mountaindarkgraysky.jpg;
   # stylixImage = ./wallpapers/beautifulmountainscape.jpg;
   # stylixImage = ./wallpapers/zaney-wallpaper.jpg;
   # stylixImage = ./wallpapers/nix-wallpaper-stripes-logo.png;

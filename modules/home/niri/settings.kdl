@@ -128,10 +128,16 @@ input {
         tap
         natural-scroll
         left-handed
+        accel-speed -0.4
     }
 
     mouse {
         left-handed
+        // WAY slower: flat = no acceleration curve (predictable), and
+        // speed runs -1 (slowest) to 1 (fastest). Tune toward -1 if
+        // your mouse is high-DPI and still too fast.
+        accel-profile "flat"
+        accel-speed -0.6
     }
 
     trackpoint {
@@ -150,7 +156,7 @@ input {
 
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    // focus-follows-mouse max-scroll-amount="0%"
+    focus-follows-mouse max-scroll-amount="0%"
 }
 
 // You can configure outputs by their name, which you can find
