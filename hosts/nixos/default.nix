@@ -140,6 +140,7 @@ in {
     bat
     btop
     cava
+    equibop
     tty-clock
     lavat
     mpv

@@ -18,9 +18,9 @@ in {
       spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
       spawn-at-startup "${pkgs.swaybg}/bin/swaybg" "-i" "${vars.stylixImage}" "-m" "fill"
       spawn-at-startup "${pkgs.awww}/bin/awww-daemon" "--namespace" "-backdrop"
-      spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6; do ${pkgs.awww}/bin/awww img --namespace -backdrop ${overviewBlur} && break; sleep 1; done"
+      spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6; do ${pkgs.awww}/bin/awww img --namespace=-backdrop ${overviewBlur} && break; sleep 1; done"
       spawn-at-startup "sh" "-c" "sleep 0.5 && systemctl --user restart noctalia || ${pkgs.noctalia}/bin/noctalia"
-      spawn-at-startup "${pkgs.hyprpolkitagent}/bin/hyprpolkitagent"
+      spawn-at-startup "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
       spawn-at-startup "sh" "-c" "sleep 2 && ${pkgs.input-remapper}/bin/input-remapper-control --command autoload || true"
     '';
     "niri/environment.kdl".source = ./environment.kdl;
