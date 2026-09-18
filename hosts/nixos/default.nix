@@ -111,6 +111,11 @@ in {
   # Enable zsh system-wide (required for it to be a valid login shell)
   programs.zsh.enable = true;
 
+  # GameMode: on-demand gaming tweaks (perf governor, higher priority).
+  # Sober already requests it; this makes the request actually work.
+  # Declarative: survives rebuilds and flake updates untouched.
+  programs.gamemode.enable = true;
+
   # User account
   users.users.${vars.username} = {
     isNormalUser = true;
