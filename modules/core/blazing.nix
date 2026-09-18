@@ -16,10 +16,6 @@ let
       // {
         modDirVersion = "${args.version}-blazing";
         structuredExtraConfig = args.structuredExtraConfig // {
-          # -march=native tuning for Alder Lake (i5-12400F).
-          # If 7.2 lacks this symbol the config phase fails fast —
-          # drop the line, nothing else changes.
-          MALDERLAKE = lib.mkForce lib.kernel.yes;
           # Single-socket desktop: no NUMA balancing overhead.
           NUMA = lib.mkForce lib.kernel.no;
         };
