@@ -8,8 +8,12 @@ in {
     enable = true;
     settings = {
       general = {
+        # Blocky look: explicit low bar count + wide bars, centered.
+        # (auto count fills the console with thin smooth bars instead.)
+        bars = 28;
+        bar_width = 3;
         bar_spacing = 1;
-        bar_width = 2;
+        center_align = 1;
         frame_rate = 60;
       };
       color = {
