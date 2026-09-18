@@ -35,10 +35,11 @@
 
     extraConfig = ''
 
-      # Pinned gray background: the ONE thing in kitty that ignores Stylix.
-      # Everything else (text, cursor, ANSI colors) follows the palette.
-      # extraConfig lands after the generated settings, so this wins.
-      background #8b919d
+      # Pinned gray background sampled from your reference image: the ONE
+      # thing in kitty that ignores Stylix. Everything else (text, cursor,
+      # ANSI colors) follows the palette. extraConfig lands after the
+      # generated settings, so this wins.
+      background #939aa3
 
       url_prefixes file ftp ftps gemini git gopher http https irc ircs kitty sftp ssh
 
