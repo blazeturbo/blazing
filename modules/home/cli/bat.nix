@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }: {
   programs.bat = {
@@ -8,7 +7,7 @@
     config = {
       pager = "less -FR";
       style = "full";
-      theme = lib.mkForce "Dracula";
+      # No theme here on purpose: Stylix owns bat theming.
     };
     extraPackages = with pkgs.bat-extras; [
       batman

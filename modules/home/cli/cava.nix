@@ -1,6 +1,9 @@
-# Cava audio visualizer, monochrome gray ramp on purpose
-# (matches the lavat/clock gray, readable on the dark terminal).
-{ ... }: {
+# Cava audio visualizer, follows the Stylix palette: gray body
+# (base02-base06 from the wallpaper) with the accent (base0D) on top.
+{ config, ... }:
+let
+  c = config.lib.stylix.colors;
+in {
   programs.cava = {
     enable = true;
     settings = {
@@ -11,12 +14,12 @@
       };
       color = {
         gradient = 1;
-        gradient_color_1 = "'#2e3237'";
-        gradient_color_2 = "'#3f454b'";
-        gradient_color_3 = "'#50575e'";
-        gradient_color_4 = "'#616872'";
-        gradient_color_5 = "'#767d85'";
-        gradient_color_6 = "'#939aa3'";
+        gradient_color_1 = "'#${c.base02}'";
+        gradient_color_2 = "'#${c.base03}'";
+        gradient_color_3 = "'#${c.base04}'";
+        gradient_color_4 = "'#${c.base05}'";
+        gradient_color_5 = "'#${c.base06}'";
+        gradient_color_6 = "'#${c.base0D}'";
       };
     };
   };

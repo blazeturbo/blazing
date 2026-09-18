@@ -1,6 +1,6 @@
-# Eye-candy launchers. tty-clock is FORCED onto the Stylix palette:
+# Eye-candy launchers, all on the Stylix palette:
 # Kitty's colors 0-7 are Stylix base00/08/0B/0A/0D/0E/0C/05, so the Nix
-# code below picks the slot nearest the accent at build time — the clock
+# code below picks the slot nearest the accent at build time — everything
 # follows wallpaper changes on rebuild, no exceptions.
 { config, lib, ... }:
 let
@@ -30,14 +30,22 @@ let
   nearestANSI = builtins.toString (lib.foldl' (
       best: i: if dist2 (builtins.elemAt ansiSlots i) < dist2 (builtins.elemAt ansiSlots best) then i else best
     ) 0 (lib.range 1 7));
+  nearestIdx = lib.foldl' (
+    best: i: if dist2 (builtins.elemAt ansiSlots i) < dist2 (builtins.elemAt ansiSlots best) then i else best
+  ) 0 (lib.range 1 7);
+  # cmatrix only takes color names, so map the accent's nearest ANSI slot.
+  cmatrixNames = [ "black" "red" "green" "yellow" "blue" "magenta" "cyan" "white" ];
+  cmatrixColor = builtins.elemAt cmatrixNames nearestIdx;
+  # lavat takes hex without '#'; use the Stylix accent for both ends
+  # (uniform flat color, gradient flags kept).
+  lavatHex = lib.toUpper c.base0D;
 in {
   home.shellAliases = {
     # Big centered clock with seconds, in the ANSI slot closest to the accent
     tty-clock = "tty-clock -s -c -C${nearestANSI}";
-    # Matrix rain, bold
-    cmatrix = "cmatrix -b -C blue";
-    # Lava lamp: ONE single flat gray (matches the cava/clock gray),
-    # gradient mode with both ends equal so it's uniform, not a gradient.
-    lavat = "lavat -g -c 939AA3 -k 939AA3 -G";
+    # Matrix rain, bold, accent-colored
+    cmatrix = "cmatrix -b -C ${cmatrixColor}";
+    # Lava lamp: flat Stylix accent, uniform, not a gradient.
+    lavat = "lavat -g -c ${lavatHex} -k ${lavatHex} -G";
   };
 }

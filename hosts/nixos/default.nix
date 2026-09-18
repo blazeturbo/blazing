@@ -150,6 +150,8 @@ in {
     btop
     cava
     equibop
+    discord
+    opencode-desktop
     tty-clock
     lavat
     mpv

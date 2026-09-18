@@ -33,7 +33,6 @@ let
       echo -e "${c_base0D} | _ \\ __ _(_)_ _  | |__  _____ __ __ ${c_reset}"
       echo -e "${c_base0C} |   // _  | | ' \\ | '_ \\/ _ \\ V  V / ${c_reset}"
       echo -e "${c_base0B} |_|_\\\\__,_|_|_||_||_.__/\\___/\\_/\\_/  ${c_reset}"
-      echo -e "${c_base0A}       NixOS Configuration CLI         ${c_reset}"
       echo
     }
 
