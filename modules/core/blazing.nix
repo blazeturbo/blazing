@@ -14,8 +14,22 @@ let
     args:
     pkgs.buildLinux (args
       // {
+        # Release string becomes <version>-blazing:
+        # - the patch below wipes Zen's "EXTRAVERSION = -zen2" from the
+        #   top Makefile (if that line ever disappears upstream, patching
+        #   fails loudly in seconds — delete both spots then),
+        # - LOCALVERSION appends our suffix via Kconfig,
+        # - modDirVersion must equal the real release, hence this form.
+        # It tracks args.version, so kernel updates can't desync it.
         modDirVersion = "${args.version}-blazing";
+        kernelPatches = (args.kernelPatches or [ ]) ++ [
+          {
+            name = "blazing-extraversion";
+            patch = ./blazing-extraversion.patch;
+          }
+        ];
         structuredExtraConfig = args.structuredExtraConfig // {
+          LOCALVERSION = lib.mkForce (lib.kernel.freeform "-blazing");
           # Single-socket desktop: no NUMA balancing overhead.
           NUMA = lib.mkForce lib.kernel.no;
         };

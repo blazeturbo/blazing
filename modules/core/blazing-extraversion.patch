@@ -1,0 +1,5 @@
+--- a/Makefile
++++ b/Makefile
+@@ -5 +5 @@
+-EXTRAVERSION = -zen2
++EXTRAVERSION =
