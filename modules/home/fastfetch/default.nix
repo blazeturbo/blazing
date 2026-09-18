@@ -71,7 +71,7 @@ in {
         }
         {
           type = "kernel";
-          key = " ├  ";
+          key = " └  ";
           keyColor = osColor;
         }
         "break"
