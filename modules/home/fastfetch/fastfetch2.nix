@@ -13,8 +13,10 @@ in
   # everything below it is `fastfetch --logo none` (our custom modules).
   xdg.configFile."fetch/config".text = ''
     # Info panel source: our fastfetch setup (its own logo disabled,
-    # fetch draws the spinning 3D logo itself)
-    info_command=fastfetch --logo none
+    # fetch draws the spinning 3D logo itself).
+    # --pipe false forces colors on: areofyl captures this through a pipe,
+    # and fastfetch strips colors when piped unless told otherwise.
+    info_command=fastfetch --logo none --pipe false
     # Render height (rows)
     height=27
   '';
