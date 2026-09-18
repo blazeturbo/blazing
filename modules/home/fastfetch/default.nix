@@ -18,7 +18,7 @@
         # areofyl/fetch loads the same family for the spinning logo.
         source = "nixos_small";
         padding = {
-          top = 11;
+          top = 10;
           left = 2;
         };
       };
