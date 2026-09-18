@@ -112,8 +112,21 @@ in {
     binfmt = true;
   };
 
-  # Flatpak apps support
+  # Flatpak apps support + the Flathub remote declared once, so it
+  # survives rebuilds (plain `flatpak remote-add` alone would too, but
+  # this way a fresh machine gets it automatically).
   services.flatpak.enable = true;
+  systemd.services.flatpak-add-flathub = {
+    description = "Add Flathub remote if missing";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [ flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    '';
+    serviceConfig.Type = "oneshot";
+  };
 
   # Input remapping daemon (configure presets in the input-remapper GUI,
   # set one to "autoload" and it loads on every login via niri autostart)

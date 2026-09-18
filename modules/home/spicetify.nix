@@ -1,6 +1,6 @@
-# Spotify, themed by spicetify with a custom color scheme taken straight
-# from the Stylix palette (follows wallpaper changes on rebuild),
-# plus the Marketplace custom app for browsing themes/extensions in-client.
+# Spotify, wearing our own theme: darkthemer's "text" (spotify-tui look,
+# monospace everything) with a custom color scheme taken straight from
+# the Stylix palette. Follows wallpaper changes on rebuild.
 { config, pkgs, inputs, ... }:
 let
   c = config.lib.stylix.colors;
@@ -9,22 +9,24 @@ in {
   programs.spicetify = {
     enable = true;
     enabledCustomApps = with spicePkgs.apps; [ marketplace ];
+    theme = {
+      name = "stylix";
+      src = ./spicetify-text;
+    };
     customColorScheme = {
       text = c.base05;
       subtext = c.base04;
       main = c.base00;
-      sidebar = c.base00;
-      player = c.base00;
-      card = c.base01;
-      shadow = c.base00;
-      selected-row = c.base05;
-      button = c.base0D;
-      button-active = c.base05;
-      button-disabled = c.base03;
-      tab-active = c.base0D;
-      notification = c.base01;
+      accent = c.base0D;
+      accent-active = c.base0D;
+      accent-inactive = c.base02;
+      banner = c.base0D;
+      border-active = c.base0D;
+      border-inactive = c.base03;
+      header = c.base03;
+      highlight = c.base01;
+      notification = c.base0D;
       notification-error = c.base08;
-      misc = c.base01;
     };
   };
 }
