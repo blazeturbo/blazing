@@ -4,6 +4,7 @@ let
 in {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/core/blazing.nix
     ../../modules/core/niri.nix
     ../../modules/core/nvidia.nix
     ../../modules/core/scheduler.nix
@@ -20,10 +21,9 @@ in {
     auto-optimise-store = true;
   };
 
-  # Bootloader & Kernel
+  # Bootloader (kernel comes from modules/core/blazing.nix)
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Networking
   networking.hostName = vars.hostname;

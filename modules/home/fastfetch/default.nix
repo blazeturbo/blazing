@@ -74,11 +74,6 @@ in {
           key = " ├  ";
           keyColor = osColor;
         }
-        {
-          type = "packages";
-          key = " ├ 󰏖 ";
-          keyColor = osColor;
-        }
         "break"
         {
           type = "wm";
