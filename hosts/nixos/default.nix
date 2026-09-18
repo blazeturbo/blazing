@@ -79,6 +79,33 @@ in {
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+
+    # Swap left/right channels on every output (wired, USB, HDMI, BT):
+    # telling WirePlumber the first hardware channel is FR (not FL)
+    # routes left content to the physical right ear and vice versa.
+    # Native WirePlumber rule, no extra packages.
+    wireplumber.extraConfig."51-swap-channels" = {
+      "monitor.alsa.rules" = [
+        {
+          matches = [{ "node.name" = "~alsa_output.*"; }];
+          actions = {
+            update-props = {
+              "audio.position" = [ "FR" "FL" ];
+            };
+          };
+        }
+      ];
+      "monitor.bluez.rules" = [
+        {
+          matches = [{ "node.name" = "~bluez_output.*"; }];
+          actions = {
+            update-props = {
+              "audio.position" = [ "FR" "FL" ];
+            };
+          };
+        }
+      ];
+    };
   };
 
   # Enable zsh system-wide (required for it to be a valid login shell)
@@ -152,6 +179,7 @@ in {
     equibop
     discord
     opencode-desktop
+    obs-studio
     tty-clock
     lavat
     mpv
