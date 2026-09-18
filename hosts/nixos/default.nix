@@ -116,6 +116,12 @@ in {
   # Declarative: survives rebuilds and flake updates untouched.
   programs.gamemode.enable = true;
 
+  # CPU at full ramp, always: sustained high clocks in games instead of
+  # parking at the 800 MHz floor under load. Safe (stock Intel p-state,
+  # no overclock, no voltage changes); costs warmer idle + more fan.
+  # Declarative: survives rebuilds and flake updates untouched.
+  powerManagement.cpuFreqGovernor = "performance";
+
   # User account
   users.users.${vars.username} = {
     isNormalUser = true;
