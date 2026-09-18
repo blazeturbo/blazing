@@ -1,11 +1,14 @@
 # Spotify, themed by spicetify with a custom color scheme taken straight
-# from the Stylix palette (follows wallpaper changes on rebuild).
-{ config, ... }:
+# from the Stylix palette (follows wallpaper changes on rebuild),
+# plus the Marketplace custom app for browsing themes/extensions in-client.
+{ config, pkgs, inputs, ... }:
 let
   c = config.lib.stylix.colors;
+  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
   programs.spicetify = {
     enable = true;
+    enabledCustomApps = with spicePkgs.apps; [ marketplace ];
     customColorScheme = {
       text = c.base05;
       subtext = c.base04;
