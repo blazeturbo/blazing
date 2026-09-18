@@ -4573,8 +4573,17 @@ int main(int argc, char **argv) {
     float cB = cosf(B), sB = sinf(B);
 
     const float lx = light_x, ly = light_y, lz = light_z;
+    // Center the logo on the info block instead of pinning it to the top,
+    // but never let it clip above row 1.
+    float logo_y_center = fixed_y_center;
+    if (!layout_stacked && show_info && fetch_line_count > 0) {
+      float info_mid = (float)fetch_start + (float)fetch_line_count * 0.5f;
+      logo_y_center = info_mid + (face_up - face_dn) * 0.5f;
+      if (logo_y_center < face_up + 1.0f)
+        logo_y_center = face_up + 1.0f;
+    }
     const float y_center = (!layout_stacked && show_info)
-                              ? fixed_y_center
+                              ? logo_y_center
                               : render_height * 0.5f;
     const int smax = shading_count - 1;
     const float half_aw = (float)anim_width * 0.5f;
