@@ -51,11 +51,11 @@ in
     spin=xy
     speed=1.6
     # Stylix accent (nearest named color to base0D #${c.base0D}).
-    # Logo faces follow the theme; set both so fallback two-tone
-    # logos stay on-palette too.
+    # Whole logo in the accent slot: uniform, palette-tracked, never
+    # hardcoded. Shape, spin, speed and shading untouched.
     label_color=${accentName}
-    logo_outer=white
-    logo_inner=white
+    logo_outer=${accentName}
+    logo_inner=${accentName}
   '';
 
   # Alias so `fastfetch2` calls it (infinite spin, no frame cap)
