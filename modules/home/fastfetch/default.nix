@@ -17,7 +17,7 @@ in {
       display = {
         color = {
           keys = "#${c.base0D}";
-          output = "#${c.base05}";
+          output = "#${c.base0D}";
         };
         separator = "➜ ";
       };

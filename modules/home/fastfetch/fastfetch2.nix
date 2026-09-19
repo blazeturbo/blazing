@@ -54,7 +54,7 @@ in
     # Logo faces follow the theme; set both so fallback two-tone
     # logos stay on-palette too.
     label_color=${accentName}
-    logo_outer=${accentName}
+    logo_outer=white
     logo_inner=white
   '';
 
