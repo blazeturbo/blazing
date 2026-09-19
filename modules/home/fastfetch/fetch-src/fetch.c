@@ -1409,13 +1409,11 @@ static void gather_title(void) {
   }
   gethostname(host, sizeof(host));
 
-  // Title row color is hardcoded on purpose (user request): the whole
-  // astrid@nixos title in Tokyo Night purple #bb9af7 (same as nixos).
-  // Truecolor escapes, terminal-independent.
+  // Title row follows the Stylix palette via label_color (derived from
+  // the Stylix accent in fetch config): user and host in accent, @ plain.
   char line[MAX_LINE_LEN];
-  snprintf(line, sizeof(line),
-           "\033[1;38;2;187;154;247m%s@%s\033[0m",
-           user, host);
+  snprintf(line, sizeof(line), "\033[1;%sm%s\033[0m@\033[1;%sm%s\033[0m",
+           label_color, user, label_color, host);
   add_line(line);
 
   // No separator underline under the title (user request): the info block
