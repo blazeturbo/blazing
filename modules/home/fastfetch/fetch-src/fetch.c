@@ -1418,19 +1418,9 @@ static void gather_title(void) {
            user, host);
   add_line(line);
 
-  // separator
-  int title_len = strlen(user) + 1 + strlen(host);
-  char sep[MAX_LINE_LEN];
-  int sep_char_len = strlen(config_separator);
-  if (sep_char_len == 0)
-    sep_char_len = 1;
-  int pos = 0;
-  for (int i = 0; i < title_len && pos + sep_char_len < MAX_LINE_LEN; i++) {
-    memcpy(sep + pos, config_separator, sep_char_len);
-    pos += sep_char_len;
-  }
-  sep[pos] = '\0';
-  add_line(sep);
+  // No separator underline under the title (user request): the info block
+  // starts right below astrid@nixos. (Box mode assumes title+separator
+  // layout, but box is never enabled in our config, so this is safe.)
 }
 
 static void gather_os(void) {
