@@ -4308,6 +4308,11 @@ int main(int argc, char **argv) {
   if (config_logo_inner[0])
     color_inner = config_logo_inner;
 
+  // Stylix-only logo colors: ignore the loaded logo's native ANSI codes so
+  // the SAME logo shape always renders two-tone (faces = inner, sides =
+  // outer). Shape, spin, speed, shading and behavior are untouched.
+  logo_has_ansi = 0;
+
   typedef void (*gather_fn)(void);
   gather_fn fns[F_COUNT] = {
       [F_OS] = gather_os,

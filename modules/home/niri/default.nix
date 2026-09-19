@@ -30,7 +30,6 @@ let
     SLEEP="${pkgs.coreutils}/bin/sleep"
     MV="${pkgs.coreutils}/bin/mv"
     RM="${pkgs.coreutils}/bin/rm"
-    CP="${pkgs.coreutils}/bin/cp"
     GIT="${pkgs.git}/bin/git"
     GREP="${pkgs.gnugrep}/bin/grep"
     SED="${pkgs.gnused}/bin/sed"
@@ -63,12 +62,16 @@ let
     # All logging goes to stdout -> journalctl --user -u niri-backdrop-follower.
     log() { printf '[backdrop-follower] %s\n' "$*"; }
     sync_repo() {
-      # Validate first (guards half-written picks), then copy + stage +
-      # point variables.nix at it. Best-effort: any failure keeps last good.
+      # Validate first (guards half-written picks), then normalize to JPEG
+      # (palette-generator only reads JPEG/PNG/BMP/GIF/HDR/TIFF/TGA — never
+      # WebP, whatever the extension claims), write ATOMICALLY (tmp + rename
+      # so a concurrent rebuild can never ingest a partial file), stage, and
+      # point variables.nix at it. Best-effort: failure keeps last good.
       [ -f "$1" ] || return 1
       "$MAGICK" identify "$1" >/dev/null 2>&1 || return 1
       [ -d "$REPO/wallpapers" ] || return 1
-      "$CP" "$1" "$WALL" || return 1
+      "$MAGICK" "$1" -background black -alpha remove -alpha off -strip -quality 92 "JPG:$WALL.tmp" || return 1
+      "$MV" "$WALL.tmp" "$WALL" || { "$RM" -f "$WALL.tmp"; return 1; }
       (cd "$REPO" && "$GIT" add wallpapers/noctalia.jpg) || return 1
       # Active line only (^[space]*stylixImage): commented alternatives stay intact.
       if ! "$GREP" -q '^[[:space:]]*stylixImage = ./wallpapers/noctalia.jpg;' "$VARS" 2>/dev/null; then
