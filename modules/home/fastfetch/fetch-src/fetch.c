@@ -1410,10 +1410,10 @@ static void gather_title(void) {
   gethostname(host, sizeof(host));
 
   // Title row follows the Stylix palette via label_color (derived from
-  // the Stylix accent in fetch config): user and host in accent, @ plain.
+  // the Stylix accent in fetch config): user, @ and host all in accent.
   char line[MAX_LINE_LEN];
-  snprintf(line, sizeof(line), "\033[1;%sm%s\033[0m@\033[1;%sm%s\033[0m",
-           label_color, user, label_color, host);
+  snprintf(line, sizeof(line), "\033[1;%sm%s\033[0m\033[1;%sm@\033[0m\033[1;%sm%s\033[0m",
+           label_color, user, label_color, label_color, host);
   add_line(line);
 
   // No separator underline under the title (user request): the info block
