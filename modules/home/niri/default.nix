@@ -13,17 +13,27 @@ let
   # Backdrop follower: Noctalia owns the wallpaper at runtime (picked in its
   # own picker, stored per-monitor in ~/.local/state/noctalia/settings.toml),
   # so the overview backdrop can't be build-time-pinned. This polls that file
-  # and re-blurs + re-pushes the -backdrop awww layer on every change.
-  # Same blur recipe as overviewBlur above; absolute tool paths, no new deps.
+  # and on every change: re-blurs + re-pushes the -backdrop awww layer
+  # (instant), AND syncs the pick into the repo (wallpapers/noctalia.jpg +
+  # variables.nix line, git-staged) so the next manual rebuild re-themes
+  # all of Stylix onto it. Same blur recipe as overviewBlur above;
+  # absolute tool paths, no new deps.
   backdropFollower = pkgs.writeShellScript "niri-backdrop-follower" ''
     set -uo pipefail
     STATE="$HOME/.local/state/noctalia/settings.toml"
     OUT="''${XDG_CACHE_HOME:-$HOME/.cache}/niri-overview-blur.jpg"
+    REPO="$HOME/.config/nixos"
+    WALL="$REPO/wallpapers/noctalia.jpg"
+    VARS="$REPO/variables.nix"
     MAGICK="${pkgs.imagemagick}/bin/magick"
     AWWW="${pkgs.awww}/bin/awww"
     SLEEP="${pkgs.coreutils}/bin/sleep"
     MV="${pkgs.coreutils}/bin/mv"
     RM="${pkgs.coreutils}/bin/rm"
+    CP="${pkgs.coreutils}/bin/cp"
+    GIT="${pkgs.git}/bin/git"
+    GREP="${pkgs.gnugrep}/bin/grep"
+    SED="${pkgs.gnused}/bin/sed"
     current=""
     pick_path() {
       [ -f "$STATE" ] || return 0
@@ -50,10 +60,27 @@ let
         && "$AWWW" img --namespace=-backdrop "$OUT" >/dev/null 2>&1
       "$RM" -f "$OUT.tmp"
     }
+    sync_repo() {
+      # Validate first (guards half-written picks), then copy + stage +
+      # point variables.nix at it. Best-effort: any failure keeps last good.
+      [ -f "$1" ] || return 1
+      "$MAGICK" identify "$1" >/dev/null 2>&1 || return 1
+      [ -d "$REPO/wallpapers" ] || return 1
+      "$CP" "$1" "$WALL" || return 1
+      (cd "$REPO" && "$GIT" add wallpapers/noctalia.jpg) || return 1
+      # Active line only (^[space]*stylixImage): commented alternatives stay intact.
+      if ! "$GREP" -q '^[[:space:]]*stylixImage = ./wallpapers/noctalia.jpg;' "$VARS" 2>/dev/null; then
+        "$SED" -i 's|^\([[:space:]]*\)stylixImage = .*|\1stylixImage = ./wallpapers/noctalia.jpg;|' "$VARS" || return 1
+      fi
+      return 0
+    }
     while true; do
       next=$(pick_path)
       if [ -n "$next" ] && [ "$next" != "$current" ]; then
-        if apply "$next"; then current="$next"; fi
+        if apply "$next"; then
+          current="$next"
+          sync_repo "$next" || true
+        fi
       fi
       "$SLEEP" 2
     done
