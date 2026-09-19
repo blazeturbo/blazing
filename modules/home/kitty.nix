@@ -34,6 +34,10 @@
     shellIntegration.mode = "enabled";
 
     extraConfig = ''
+      # Hardcoded near-black background (overrides Stylix): Catppuccin Crust.
+      # extraConfig applies after all generated settings, so this wins while
+      # absolutely everything else keeps flowing from the Stylix theme.
+      background #11111b
 
       url_prefixes file ftp ftps gemini git gopher http https irc ircs kitty sftp ssh
 
