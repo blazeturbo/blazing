@@ -1410,12 +1410,12 @@ static void gather_title(void) {
   gethostname(host, sizeof(host));
 
   // Title row colors are hardcoded on purpose (user request): astrid in
-  // Tokyo Night cyan #7dcfff, @ in Tokyo Night orange #ff9e64, nixos in
+  // Tokyo Night cyan #7dcfff, @ in Catppuccin Mocha pink #f5c2e7, nixos in
   // Tokyo Night purple #bb9af7. Truecolor escapes, terminal-independent.
   char line[MAX_LINE_LEN];
   snprintf(line, sizeof(line),
            "\033[1;38;2;125;207;255m%s\033[0m"
-           "\033[1;38;2;255;158;100m@\033[0m"
+           "\033[1;38;2;245;194;231m@\033[0m"
            "\033[1;38;2;187;154;247m%s\033[0m",
            user, host);
   add_line(line);
