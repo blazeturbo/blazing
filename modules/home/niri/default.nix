@@ -9,7 +9,73 @@ let
   } ''
     magick ${vars.stylixImage} -background black -alpha remove -alpha off -blur 0x14 $out
   '';
+
+  # Backdrop follower: Noctalia owns the wallpaper at runtime (picked in its
+  # own picker, stored per-monitor in ~/.local/state/noctalia/settings.toml),
+  # so the overview backdrop can't be build-time-pinned. This polls that file
+  # and re-blurs + re-pushes the -backdrop awww layer on every change.
+  # Same blur recipe as overviewBlur above; absolute tool paths, no new deps.
+  backdropFollower = pkgs.writeShellScript "niri-backdrop-follower" ''
+    set -uo pipefail
+    STATE="$HOME/.local/state/noctalia/settings.toml"
+    OUT="''${XDG_CACHE_HOME:-$HOME/.cache}/niri-overview-blur.jpg"
+    MAGICK="${pkgs.imagemagick}/bin/magick"
+    AWWW="${pkgs.awww}/bin/awww"
+    SLEEP="${pkgs.coreutils}/bin/sleep"
+    MV="${pkgs.coreutils}/bin/mv"
+    RM="${pkgs.coreutils}/bin/rm"
+    current=""
+    pick_path() {
+      [ -f "$STATE" ] || return 0
+      # Per-monitor section first, [wallpaper.default] as fallback.
+      # (index() string matching on purpose: portable across awks,
+      # no regex escapes to mistreat.)
+      p=$(awk '
+        /^\[/ { in_s = (index($0, "[wallpaper.monitors.") == 1); next }
+        in_s && /^path *=/ { gsub(/^path *= *"/, ""); gsub(/".*$/, ""); print; exit }
+      ' "$STATE")
+      if [ -z "$p" ]; then
+        p=$(awk '
+          /^\[/ { in_s = ($0 == "[wallpaper.default]"); next }
+          in_s && /^path *=/ { gsub(/^path *= *"/, ""); gsub(/".*$/, ""); print; exit }
+        ' "$STATE")
+      fi
+      printf '%s' "$p"
+      return 0
+    }
+    apply() {
+      [ -f "$1" ] || return 0
+      "$MAGICK" "$1" -background black -alpha remove -alpha off -blur 0x14 "$OUT.tmp" \
+        && "$MV" "$OUT.tmp" "$OUT" \
+        && "$AWWW" img --namespace=-backdrop "$OUT" >/dev/null 2>&1
+      "$RM" -f "$OUT.tmp"
+    }
+    while true; do
+      next=$(pick_path)
+      if [ -n "$next" ] && [ "$next" != "$current" ]; then
+        if apply "$next"; then current="$next"; fi
+      fi
+      "$SLEEP" 2
+    done
+  '';
 in {
+  systemd.user.services.niri-backdrop-follower = {
+    Unit = {
+      Description = "Keep Niri overview backdrop on Noctalia wallpaper";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${backdropFollower}";
+      Restart = "on-failure";
+      RestartSec = "2";
+    };
+  };
+
   xdg.configFile = {
     "niri/config.kdl".source = ./config.kdl;
     "niri/animations.kdl".source = ./animations.kdl;
