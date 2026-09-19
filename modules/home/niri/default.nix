@@ -60,6 +60,8 @@ let
         && "$AWWW" img --namespace=-backdrop "$OUT" >/dev/null 2>&1
       "$RM" -f "$OUT.tmp"
     }
+    # All logging goes to stdout -> journalctl --user -u niri-backdrop-follower.
+    log() { printf '[backdrop-follower] %s\n' "$*"; }
     sync_repo() {
       # Validate first (guards half-written picks), then copy + stage +
       # point variables.nix at it. Best-effort: any failure keeps last good.
@@ -71,15 +73,21 @@ let
       # Active line only (^[space]*stylixImage): commented alternatives stay intact.
       if ! "$GREP" -q '^[[:space:]]*stylixImage = ./wallpapers/noctalia.jpg;' "$VARS" 2>/dev/null; then
         "$SED" -i 's|^\([[:space:]]*\)stylixImage = .*|\1stylixImage = ./wallpapers/noctalia.jpg;|' "$VARS" || return 1
+        log "variables.nix now points at wallpapers/noctalia.jpg"
       fi
       return 0
     }
     while true; do
       next=$(pick_path)
       if [ -n "$next" ] && [ "$next" != "$current" ]; then
+        log "wallpaper changed -> $next"
         if apply "$next"; then
           current="$next"
-          sync_repo "$next" || true
+          if sync_repo "$next"; then
+            log "repo synced, rebuild to re-theme Stylix"
+          else
+            log "repo sync failed, keeping last good state"
+          fi
         fi
       fi
       "$SLEEP" 2
