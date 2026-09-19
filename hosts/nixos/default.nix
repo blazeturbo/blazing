@@ -186,8 +186,8 @@ in {
     eza
     bat
     btop
-    cava
     equibop
+    cava
     discord
     opencode-desktop
     obs-studio
