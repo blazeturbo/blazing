@@ -6,6 +6,7 @@ in {
     ./hardware-configuration.nix
     ../../modules/core/blazing.nix
     ../../modules/core/niri.nix
+    ../../modules/core/network.nix
     ../../modules/core/nvidia.nix
     ../../modules/core/scheduler.nix
     ../../modules/core/stylix.nix
