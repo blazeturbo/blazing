@@ -134,3 +134,12 @@ window-rule {
     min-width 300
     min-height 100
 }
+
+// See-through Spotify and Equibop (0.8, like kitty). Per-app only on
+// purpose: nothing global, Sober and everything else stay fully opaque.
+window-rule {
+    match app-id=r#"spotify"#
+    match app-id=r#"equibop"#
+
+    opacity 0.8
+}
