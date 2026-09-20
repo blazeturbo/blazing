@@ -1,5 +1,3 @@
-# os
-
 My NixOS setup. Niri as the window manager, Noctalia as the bar,
 Stylix pulling the whole color scheme out of the wallpaper, one flake
 to rebuild all of it.
@@ -9,11 +7,6 @@ to rebuild all of it.
 <video src="assets/thisone.mp4" controls muted loop playsinline></video>
 
 <video src="assets/thisone2.mp4" controls muted loop playsinline></video>
-
-GitHub only plays videos inline from attachment URLs, so if these show
-as links instead of players: drag each mp4 into any issue comment, copy
-the URL it gives you, and swap it into the `src` above. Two minutes,
-then they autoplay right here.
 
 ## Install
 
