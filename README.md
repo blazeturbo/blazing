@@ -84,9 +84,7 @@ A few things live outside the repo on purpose and need manual setup:
   AppImage itself with `--appimage-extract`.
 - **Cursor theme**: unzip into `~/.local/share/icons/`. The config points
   `XCURSOR_THEME` there; relog after changing it.
-- **input-remapper**: open the GUI once, build a preset, tick autoload.
-  The daemon + autoload hook are already wired.
-- **Spotify**: log in once in the app; theming is declarative.
+- **Spicetify**: log in once in the app; theming is declarative.
 
 ## Notes
 
