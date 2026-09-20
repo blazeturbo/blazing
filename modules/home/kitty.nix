@@ -35,10 +35,10 @@
 
     extraConfig = ''
       # Hardcoded near-black background (overrides Stylix): Catppuccin Mocha
-      # Mantle #181825 — one step up from Crust, still dark, blends anywhere.
+      # Base #1e1e2e — trying it out (was Mantle). Still dark, blends anywhere.
       # extraConfig applies after all generated settings, so this wins while
       # absolutely everything else keeps flowing from the Stylix theme.
-      background #181825
+      background #1e1e2e
 
       url_prefixes file ftp ftps gemini git gopher http https irc ircs kitty sftp ssh
 
