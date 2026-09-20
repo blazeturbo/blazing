@@ -7,7 +7,6 @@ to rebuild all of it.
 - [window management](https://github.com/blazeturbo/blazing/blob/master/previews/windowmanagement.mp4)
 - [overall](https://github.com/blazeturbo/blazing/blob/master/previews/overall.mp4)
 
-
 ## Install
 
 Fresh machine: run `install.sh` as your normal user, not root. It asks
