@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="https://github.com/blazeturbo/os.git"
+REPO_URL="https://github.com/blazeturbo/blazing.git"
 DEST="$HOME/.config/nixos"
 USERNAME=""
 HOSTNAME=""
