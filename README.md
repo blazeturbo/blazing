@@ -53,5 +53,4 @@ modules/core/               niri, stylix, scheduler, network, rainbow CLI
 modules/home/               kitty, zsh, fastfetch, cava, noctalia, niri configs
 wallpapers/                 Stylix builds the palette from stylixImage
 install.sh                  fresh-machine installer
-assets/                     readme previews
 ```
