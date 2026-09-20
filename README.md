@@ -4,9 +4,12 @@ to rebuild all of it.
 
 ## Previews
 
-<video src="assets/thisone.mp4" controls muted loop playsinline></video>
+- [window management](https://github.com/blazeturbo/blazing/blob/master/previews/windowmanagement.mp4)
+- [overall](https://github.com/blazeturbo/blazing/blob/master/previews/overall.mp4)
 
-<video src="assets/thisone2.mp4" controls muted loop playsinline></video>
+Click through, they play right on the file page. Inline players need
+attachment URLs instead: drag each mp4 into any issue comment, send me
+the two URLs, and I'll wire them in.
 
 ## Install
 
