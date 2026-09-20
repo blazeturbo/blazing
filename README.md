@@ -7,9 +7,6 @@ to rebuild all of it.
 - [window management](https://github.com/blazeturbo/blazing/blob/master/previews/windowmanagement.mp4)
 - [overall](https://github.com/blazeturbo/blazing/blob/master/previews/overall.mp4)
 
-Click through, they play right on the file page. Inline players need
-attachment URLs instead: drag each mp4 into any issue comment, send me
-the two URLs, and I'll wire them in.
 
 ## Install
 
