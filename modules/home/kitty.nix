@@ -39,6 +39,8 @@
       # extraConfig applies after all generated settings, so this wins while
       # absolutely everything else keeps flowing from the Stylix theme.
       background #1e1e2e
+      # More see-through than Stylix's 0.9: background shows through.
+      background_opacity 0.8
 
       url_prefixes file ftp ftps gemini git gopher http https irc ircs kitty sftp ssh
 
