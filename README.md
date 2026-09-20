@@ -41,7 +41,7 @@ Mod+Shift+D launcher, Mod+N notifications, Mod+Shift+V clipboard.
 ## Fresh machine install
 
 Use `install.sh`, it does the boring parts for you: clones the repo to
-`~/.config/nixos`, writes your username and hostname into
+`~/.config/nixos`, asks a few questions, writes the answers into
 `variables.nix`, regenerates `hardware-configuration.nix` for your own
 hardware, checks the flake evaluates, then rebuilds into the new system.
 
@@ -52,24 +52,36 @@ user, not root:
 ./install.sh
 ```
 
-With no flags it takes every default: username and hostname come from
-the machine itself, timezone stays whatever `variables.nix` already says.
-Override what you need:
+With no flags it just walks you through it: username, hostname,
+timezone, GPU (nvidia/amd/intel), boot mode (uefi/bios, plus the disk
+for grub on BIOS). Everything shows its default in brackets, hitting
+enter accepts it, and it re-asks instead of accepting nonsense. At the
+end it prints a summary and asks for confirmation before touching
+anything.
+
+Full run with no questions asked (for scripts, or if you already know
+your answers):
 
 ```bash
-./install.sh --username astrid --hostname nixos --timezone Europe/Paris
+./install.sh --username astrid --hostname nixos --timezone Europe/Paris \
+  --gpu nvidia --boot uefi --yes
 ```
 
 All the flags: `--repo URL` (if you forked this), `--dir PATH` (clone
 somewhere else), `--username NAME`, `--hostname NAME`,
-`--timezone ZONE`, `--no-switch` (set everything up but don't rebuild
-yet), `-h` (short help).
+`--timezone ZONE`, `--gpu nvidia|amd|intel`, `--boot uefi|bios`,
+`--disk /dev/sda` (BIOS only), `--yes` (skip the confirmation),
+`--no-switch` (set everything up but don't rebuild yet), `-h`.
 
-One thing to be aware of: the installer overwrites
+Two honest caveats. First, the installer overwrites
 `hosts/nixos/hardware-configuration.nix` with a freshly generated one.
 That's on purpose, a hardware config from another machine is useless at
 best. If you had custom mounts or kernel modules in there, re-add them
-afterwards and rebuild again.
+afterwards and rebuild again. Second, the GPU and boot answers are
+recorded into `variables.nix`, but the repo currently assumes NVIDIA +
+UEFI no matter what you answer — per-GPU module switching and the grub
+path land next. On AMD/Intel or BIOS hardware, expect to finish the job
+by hand for now.
 
 After that, daily rebuilds are just `rainbow rebuild`. The script
 auto-stages git changes (flakes ignore untracked files), so new files get
