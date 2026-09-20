@@ -1,19 +1,4 @@
 #!/usr/bin/env bash
-# Installer for these NixOS dotfiles on a fresh machine.
-#
-# What it does:
-#   1. clones this repo to ~/.config/nixos (or --dir)
-#   2. writes your username/hostname into variables.nix
-#   3. regenerates hosts/nixos/hardware-configuration.nix for YOUR hardware
-#      (the shipped one belongs to the author's machine - never reuse it)
-#   4. rebuilds into the new system (unless --no-switch)
-#
-# Usage:
-#   ./install.sh [--repo URL] [--dir PATH] [--username NAME]
-#                [--hostname NAME] [--timezone ZONE] [--no-switch] [-h]
-#
-# Requirements: NixOS with flakes (installer ISOs have both),
-# git, and sudo. Run as your normal user, not root.
 set -euo pipefail
 
 REPO_URL="https://github.com/blazeturbo/os.git"
@@ -24,7 +9,7 @@ TIMEZONE=""
 SWITCH=1
 
 usage() {
-  sed -n '2,17p' "$0"
+  echo "See README.md (Fresh machine install) for usage."
   exit "${1:-0}"
 }
 

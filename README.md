@@ -40,19 +40,36 @@ Mod+Shift+D launcher, Mod+N notifications, Mod+Shift+V clipboard.
 
 ## Fresh machine install
 
-You need NixOS installed with flakes enabled, and git.
+Use `install.sh`, it does the boring parts for you: clones the repo to
+`~/.config/nixos`, writes your username and hostname into
+`variables.nix`, regenerates `hardware-configuration.nix` for your own
+hardware, checks the flake evaluates, then rebuilds into the new system.
+
+You need NixOS with flakes, plus git and sudo. Run it as your normal
+user, not root:
 
 ```bash
-git clone https://github.com/blazeturbo/os.git ~/.config/nixos
-cd ~/.config/nixos
-
-# Hardware config is machine-specific, regenerate it. Review the diff
-# afterwards, keep any custom bits (extra mounts, kernel modules).
-sudo nixos-generate-config --show-hardware-config > hosts/nixos/hardware-configuration.nix
-
-# Adjust variables.nix (username, hostname, timezone, wallpaper), then:
-sudo nixos-rebuild switch --flake .#nixos
+./install.sh
 ```
+
+With no flags it takes every default: username and hostname come from
+the machine itself, timezone stays whatever `variables.nix` already says.
+Override what you need:
+
+```bash
+./install.sh --username astrid --hostname nixos --timezone Europe/Paris
+```
+
+All the flags: `--repo URL` (if you forked this), `--dir PATH` (clone
+somewhere else), `--username NAME`, `--hostname NAME`,
+`--timezone ZONE`, `--no-switch` (set everything up but don't rebuild
+yet), `-h` (short help).
+
+One thing to be aware of: the installer overwrites
+`hosts/nixos/hardware-configuration.nix` with a freshly generated one.
+That's on purpose, a hardware config from another machine is useless at
+best. If you had custom mounts or kernel modules in there, re-add them
+afterwards and rebuild again.
 
 After that, daily rebuilds are just `rainbow rebuild`. The script
 auto-stages git changes (flakes ignore untracked files), so new files get
