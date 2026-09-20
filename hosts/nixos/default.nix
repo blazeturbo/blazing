@@ -178,6 +178,7 @@ in {
   # Removing it would break fastfetch2.
   environment.systemPackages = with pkgs; [
     git
+    gh # github CLI (releases, uploads)
     curl
     fastfetch
     yazi
