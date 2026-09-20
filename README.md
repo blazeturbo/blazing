@@ -2,6 +2,12 @@ My NixOS setup. Niri as the window manager, Noctalia as the bar,
 Stylix pulling the whole color scheme out of the wallpaper, one flake
 to rebuild all of it.
 
+## Previews
+
+<video src="https://github.com/user-attachments/assets/c126ccc6-ae46-461c-ac81-68036d0e8078" autoplay loop muted playsinline></video>
+
+<video src="https://github.com/user-attachments/assets/724ea25e-4ecf-4859-ae6a-e89ddbb5b706" autoplay loop muted playsinline></video>
+
 ## Install
 
 Fresh machine: run `install.sh` as your normal user, not root. It asks
