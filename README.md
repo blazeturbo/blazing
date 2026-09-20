@@ -2,6 +2,10 @@ My NixOS setup. Niri as the window manager, Noctalia as the bar and launcher,
 Stylix generating the whole color scheme from the wallpaper, Home Manager for
 everything user-level. One flake, one command to rebuild.
 
+## Preview
+
+<video src="assets/preview.mp4" controls muted loop></video>
+
 ## Layout
 
 ```text
