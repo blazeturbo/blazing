@@ -54,3 +54,7 @@ modules/home/               kitty, zsh, fastfetch, cava, noctalia, niri configs
 wallpapers/                 Stylix builds the palette from stylixImage
 install.sh                  fresh-machine installer
 ```
+
+## Tiny reminder
+
+Once you rebuild, install.sh will try to compile locally a "custom kernel" (basically linux zen with custom parameters and a different name). You can change that in blazing.nix.
