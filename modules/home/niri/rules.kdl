@@ -110,21 +110,6 @@ layer-rule {
     }
 }
 
-// Rules for hakuspace
-window-rule {
-    match app-id=r#"seycava"#
-    match app-id=r#"seylavat"#
-    match app-id=r#"seyclock"#
-
-    default-column-width { proportion 0.4; }
-}
-
-window-rule {
-    match app-id=r#"seycmd"#
-
-    default-column-width { proportion 0.6; }
-}
-
 // Rules for desktop icons
 window-rule {
     match app-id="desktop_icons.py"
