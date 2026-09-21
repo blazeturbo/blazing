@@ -1,194 +1,584 @@
+```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
 REPO_URL="https://github.com/blazeturbo/blazing.git"
 DEST="$HOME/.config/nixos"
+
 USERNAME=""
 HOSTNAME=""
 TIMEZONE=""
 GPU=""
 BOOT=""
 DISK=""
+
 YES=0
 SWITCH=1
 
 usage() {
-  echo "See README.md (Fresh machine install) for usage."
-  exit "${1:-0}"
+    cat <<EOF
+Usage: $0 [options]
+
+Options:
+  --repo URL          Repository to clone
+  --dir PATH          Installation directory
+  --username NAME     NixOS username
+  --hostname NAME     System hostname
+  --timezone TZ       System timezone
+  --gpu GPU           GPU: nvidia, amd, or intel
+  --boot MODE         Boot mode: uefi or bios
+  --disk DEVICE       Install disk for BIOS/GRUB
+  --yes               Skip confirmation prompt
+  --no-switch         Do not run nixos-rebuild switch
+  -h, --help          Show this help
+
+Examples:
+
+  $0
+
+  $0 --gpu nvidia
+
+  $0 --gpu nvidia --boot uefi --yes
+
+  $0 --gpu amd --hostname gaming-pc
+EOF
 }
 
-while [ $# -gt 0 ]; do
-  case "$1" in
-    --repo) REPO_URL="$2"; shift 2 ;;
-    --dir) DEST="$2"; shift 2 ;;
-    --username) USERNAME="$2"; shift 2 ;;
-    --hostname) HOSTNAME="$2"; shift 2 ;;
-    --timezone) TIMEZONE="$2"; shift 2 ;;
-    --gpu) GPU="$2"; shift 2 ;;
-    --boot) BOOT="$2"; shift 2 ;;
-    --disk) DISK="$2"; shift 2 ;;
-    --yes) YES=1; shift ;;
-    --no-switch) SWITCH=0; shift ;;
-    -h|--help) usage 0 ;;
-    *) echo "Unknown option: $1 (see --help)" >&2; exit 1 ;;
-  esac
-done
+log() {
+    printf '[install] %s\n' "$*"
+}
 
-log() { printf '[install] %s\n' "$*"; }
-die() { printf '[install] ERROR: %s\n' "$*" >&2; exit 1; }
+die() {
+    printf '[install] ERROR: %s\n' "$*" >&2
+    exit 1
+}
 
 prompt() {
-  local var="$1" text="$2" def="$3" val=""
-  if [ -t 0 ]; then
-    printf '%s [%s]: ' "$text" "$def" >&2
-    IFS= read -r val || val=""
-    [ -z "$val" ] && val="$def"
-  else
-    val="$def"
-  fi
-  printf -v "$var" '%s' "$val"
+    local var="$1"
+    local text="$2"
+    local default="${3:-}"
+    local value=""
+
+    if [ -t 0 ]; then
+        if [ -n "$default" ]; then
+            printf '%s [%s]: ' "$text" "$default" >&2
+        else
+            printf '%s: ' "$text" >&2
+        fi
+
+        IFS= read -r value || value=""
+
+        if [ -z "$value" ] && [ -n "$default" ]; then
+            value="$default"
+        fi
+    else
+        value="$default"
+    fi
+
+    printf -v "$var" '%s' "$value"
 }
 
 detect_timezone() {
-  local tz=""
-  tz="$(timedatectl show -p Timezone --value 2>/dev/null)" || tz=""
-  if [ -z "$tz" ] && [ -L /etc/localtime ]; then
-    tz="$(readlink /etc/localtime 2>/dev/null | sed 's|.*/zoneinfo/||')"
-  fi
-  [ -n "$tz" ] && [ -f "/usr/share/zoneinfo/$tz" ] && printf '%s' "$tz" && return 0
-  printf 'Europe/Paris'
+    local tz=""
+
+    tz="$(timedatectl show -p Timezone --value 2>/dev/null || true)"
+
+    if [ -z "$tz" ] && [ -L /etc/localtime ]; then
+        tz="$(readlink /etc/localtime 2>/dev/null || true)"
+        tz="${tz#*/zoneinfo/}"
+    fi
+
+    if [ -n "$tz" ] && [ -f "/usr/share/zoneinfo/$tz" ]; then
+        printf '%s' "$tz"
+        return 0
+    fi
+
+    printf '%s' "Europe/Paris"
+}
+
+detect_hostname() {
+    local hostname=""
+
+    hostname="$(cat /etc/hostname 2>/dev/null || true)"
+
+    if [ -n "$hostname" ]; then
+        printf '%s' "$hostname"
+    else
+        hostname="$(hostname 2>/dev/null || true)"
+        printf '%s' "${hostname:-nixos}"
+    fi
 }
 
 detect_disk() {
-  local src pk=""
-  src="$(findmnt -no SOURCE / 2>/dev/null)" || src=""
-  [ -n "$src" ] && pk="$(lsblk -no PKNAME "$src" 2>/dev/null)"
-  [ -n "$pk" ] && printf '/dev/%s' "$pk" && return 0
-  return 1
+    local source=""
+    local parent=""
+
+    source="$(findmnt -no SOURCE / 2>/dev/null || true)"
+
+    if [ -z "$source" ]; then
+        return 1
+    fi
+
+    parent="$(lsblk -no PKNAME "$source" 2>/dev/null || true)"
+
+    if [ -n "$parent" ]; then
+        printf '/dev/%s' "$parent"
+        return 0
+    fi
+
+    return 1
+}
+
+valid_username() {
+    [[ "$1" =~ ^[a-z_][a-z0-9_-]*$ ]]
+}
+
+valid_hostname() {
+    [[ "$1" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
+}
+
+valid_timezone() {
+    [ -f "/usr/share/zoneinfo/$1" ]
+}
+
+valid_gpu() {
+    case "$1" in
+        nvidia|amd|intel)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+valid_boot() {
+    case "$1" in
+        uefi|bios)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+normalize_gpu() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+normalize_boot() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 set_var() {
-  local key="$1" val="$2" f="variables.nix"
-  if grep -q "^  $key = " "$f"; then
-    sed -i "s|^  $key = .*|  $key = \"$val\";|" "$f"
-  else
-    sed -i "\$i\\  $key = \"$val\";" "$f"
-  fi
-  grep -q "^  $key = \"$val\";" "$f" || die "failed writing $key to variables.nix."
+    local key="$1"
+    local value="$2"
+    local file="variables.nix"
+
+    [ -f "$file" ] || die "$file not found."
+
+    # Escape characters that are special inside a Nix string.
+    local escaped
+    escaped="${value//\\/\\\\}"
+    escaped="${escaped//\"/\\\"}"
+
+    if grep -qE "^  ${key} =" "$file"; then
+        sed -i \
+            "s|^  ${key} = .*|  ${key} = \"${escaped}\";|" \
+            "$file"
+    else
+        sed -i \
+            "\$i\\  ${key} = \"${escaped}\";" \
+            "$file"
+    fi
+
+    grep -qF "  ${key} = \"${escaped}\";" "$file" \
+        || die "Failed writing ${key} to ${file}."
 }
 
-[ -f /etc/NIXOS ] || die "not a NixOS system (/etc/NIXOS missing)."
-command -v git >/dev/null || die "git not found (try: nix-shell -p git)."
-command -v nix >/dev/null || die "nix not found."
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --repo)
+            [ $# -ge 2 ] || die "--repo requires a value."
+            REPO_URL="$2"
+            shift 2
+            ;;
+
+        --dir)
+            [ $# -ge 2 ] || die "--dir requires a value."
+            DEST="$2"
+            shift 2
+            ;;
+
+        --username)
+            [ $# -ge 2 ] || die "--username requires a value."
+            USERNAME="$2"
+            shift 2
+            ;;
+
+        --hostname)
+            [ $# -ge 2 ] || die "--hostname requires a value."
+            HOSTNAME="$2"
+            shift 2
+            ;;
+
+        --timezone)
+            [ $# -ge 2 ] || die "--timezone requires a value."
+            TIMEZONE="$2"
+            shift 2
+            ;;
+
+        --gpu)
+            [ $# -ge 2 ] || die "--gpu requires a value."
+            GPU="$2"
+            shift 2
+            ;;
+
+        --boot)
+            [ $# -ge 2 ] || die "--boot requires a value."
+            BOOT="$2"
+            shift 2
+            ;;
+
+        --disk)
+            [ $# -ge 2 ] || die "--disk requires a value."
+            DISK="$2"
+            shift 2
+            ;;
+
+        --yes)
+            YES=1
+            shift
+            ;;
+
+        --no-switch)
+            SWITCH=0
+            shift
+            ;;
+
+        -h|--help)
+            usage
+            exit 0
+            ;;
+
+        *)
+            die "Unknown option: $1 (use --help)."
+            ;;
+    esac
+done
+
+# ---------------------------------------------------------------------------
+# Environment checks
+# ---------------------------------------------------------------------------
+
+[ -f /etc/NIXOS ] \
+    || die "This does not appear to be a NixOS system (/etc/NIXOS missing)."
+
+command -v git >/dev/null 2>&1 \
+    || die "git is not installed. Install it first."
+
+command -v nix >/dev/null 2>&1 \
+    || die "nix is not installed."
+
+command -v sudo >/dev/null 2>&1 \
+    || die "sudo is not installed."
+
 export NIX_CONFIG="experimental-features = nix-command flakes"
 
-[ -z "$USERNAME" ] && USERNAME="$USER"
-[ -z "$HOSTNAME" ] && HOSTNAME="$(cat /etc/hostname 2>/dev/null || hostname)"
+# ---------------------------------------------------------------------------
+# Defaults that are safe to detect automatically
+# ---------------------------------------------------------------------------
+
+[ -z "$USERNAME" ] && USERNAME="${USER:-}"
+
+[ -z "$HOSTNAME" ] && HOSTNAME="$(detect_hostname)"
+
 [ -z "$TIMEZONE" ] && TIMEZONE="$(detect_timezone)"
-[ -z "$GPU" ] && GPU="nvidia"
+
 [ -z "$BOOT" ] && BOOT="uefi"
 
+# IMPORTANT:
+# GPU intentionally has NO default.
+#
+# The user must explicitly select it.
+# ---------------------------------------------------------------------------
+
+# Username
 while true; do
-  [ -z "$USERNAME" ] && prompt USERNAME "Username" "$USER"
-  case "$USERNAME" in
-    ''|*[!a-z0-9_-]*|[-_]) log "letters, digits, _ and - only, please."; USERNAME="" ;;
-    *) break ;;
-  esac
+    if [ -z "$USERNAME" ]; then
+        prompt USERNAME "Username" "${USER:-}"
+    fi
+
+    if valid_username "$USERNAME"; then
+        break
+    fi
+
+    log "Invalid username."
+    log "Use lowercase letters, digits, '_' and '-' and start with a letter or '_'."
+    USERNAME=""
 done
-prompt HOSTNAME "Hostname" "$HOSTNAME"
+
+# Hostname
 while true; do
-  [ -z "$TIMEZONE" ] && prompt TIMEZONE "Timezone" "$(detect_timezone)"
-  if [ -f "/usr/share/zoneinfo/$TIMEZONE" ]; then break; fi
-  log "unknown timezone, check /usr/share/zoneinfo for names."
-  TIMEZONE=""
+    if [ -z "$HOSTNAME" ]; then
+        prompt HOSTNAME "Hostname" "nixos"
+    fi
+
+    if valid_hostname "$HOSTNAME"; then
+        break
+    fi
+
+    log "Invalid hostname."
+    HOSTNAME=""
 done
-GPU="$(printf '%s' "$GPU" | tr '[:upper:]' '[:lower:]')"
+
+# Timezone
 while true; do
-  [ -z "$GPU" ] && prompt GPU "GPU (nvidia/amd/intel)" "nvidia"
-  case "$GPU" in
-    nvidia|amd|intel) break ;;
-    *) log "answer nvidia, amd or intel."; GPU="" ;;
-  esac
+    if [ -z "$TIMEZONE" ]; then
+        prompt TIMEZONE "Timezone" "$(detect_timezone)"
+    fi
+
+    if valid_timezone "$TIMEZONE"; then
+        break
+    fi
+
+    log "Unknown timezone: $TIMEZONE"
+    log "Check /usr/share/zoneinfo for valid timezone names."
+    TIMEZONE=""
 done
-BOOT="$(printf '%s' "$BOOT" | tr '[:upper:]' '[:lower:]')"
+
+# ---------------------------------------------------------------------------
+# GPU -- MANDATORY
+# ---------------------------------------------------------------------------
+
+GPU="$(normalize_gpu "$GPU")"
+
 while true; do
-  [ -z "$BOOT" ] && prompt BOOT "Boot mode (uefi/bios)" "uefi"
-  case "$BOOT" in
-    uefi|bios) break ;;
-    *) log "answer uefi or bios."; BOOT="" ;;
-  esac
+    if [ -z "$GPU" ]; then
+        printf '\n'
+        log "GPU selection is required."
+        log "Available options: nvidia, amd, intel"
+        prompt GPU "GPU" ""
+        GPU="$(normalize_gpu "$GPU")"
+    fi
+
+    if valid_gpu "$GPU"; then
+        break
+    fi
+
+    log "Invalid GPU: '$GPU'"
+    log "Please enter exactly: nvidia, amd, or intel."
+    GPU=""
 done
-if [ "$BOOT" = bios ]; then
-  [ -z "$DISK" ] && DISK="$(detect_disk || true)"
-  while true; do
-    [ -z "$DISK" ] && prompt DISK "Install disk (grub goes here)" "${DISK:-/dev/sda}"
-    case "$DISK" in
-      /dev/*) ;;
-      *) DISK="/dev/$DISK" ;;
-    esac
-    if [ -e "$DISK" ]; then break; fi
-    log "$DISK not found, check lsblk."
-    DISK=""
-  done
+
+# ---------------------------------------------------------------------------
+# Boot mode
+# ---------------------------------------------------------------------------
+
+BOOT="$(normalize_boot "$BOOT")"
+
+while true; do
+    if [ -z "$BOOT" ]; then
+        prompt BOOT "Boot mode (uefi/bios)" "uefi"
+        BOOT="$(normalize_boot "$BOOT")"
+    fi
+
+    if valid_boot "$BOOT"; then
+        break
+    fi
+
+    log "Invalid boot mode. Use 'uefi' or 'bios'."
+    BOOT=""
+done
+
+# ---------------------------------------------------------------------------
+# BIOS disk
+# ---------------------------------------------------------------------------
+
+if [ "$BOOT" = "bios" ]; then
+    if [ -z "$DISK" ]; then
+        DISK="$(detect_disk || true)"
+    fi
+
+    while true; do
+        if [ -z "$DISK" ]; then
+            prompt DISK "Install disk (GRUB target)" "/dev/sda"
+        fi
+
+        case "$DISK" in
+            /dev/*)
+                ;;
+            *)
+                DISK="/dev/$DISK"
+                ;;
+        esac
+
+        if [ -b "$DISK" ]; then
+            break
+        fi
+
+        log "$DISK is not a block device."
+        log "Check your disks with: lsblk"
+        DISK=""
+    done
 fi
 
-log "---"
-log "repo:     $REPO_URL"
-log "dir:      $DEST"
-log "username: $USERNAME"
-log "hostname: $HOSTNAME"
-log "timezone: $TIMEZONE"
-log "gpu:      $GPU"
-log "boot:     $BOOT"
-[ "$BOOT" = bios ] && log "disk:     $DISK"
-log "---"
-if [ "$YES" -eq 0 ] && [ -t 0 ]; then
-  printf 'Go ahead with the install? [Y/n]: ' >&2
-  IFS= read -r go || go=""
-  case "$go" in
-    ''|[Yy]*) ;;
-    *) die "aborted." ;;
-  esac
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+
+printf '\n'
+
+log "--- Installation configuration ---"
+log "repo:      $REPO_URL"
+log "directory: $DEST"
+log "username:  $USERNAME"
+log "hostname:  $HOSTNAME"
+log "timezone:  $TIMEZONE"
+log "gpu:       $GPU"
+log "boot:      $BOOT"
+
+if [ "$BOOT" = "bios" ]; then
+    log "disk:      $DISK"
 fi
 
-if [ -e "$DEST" ] && [ -n "$(ls -A "$DEST" 2>/dev/null)" ]; then
-  die "$DEST exists and is not empty - move it aside first."
+log "----------------------------------"
+
+if [ "$YES" -eq 0 ]; then
+    if [ -t 0 ]; then
+        printf 'Go ahead with the install? [Y/n]: ' >&2
+        IFS= read -r answer || answer=""
+
+        case "$answer" in
+            ""|[Yy]|[Yy][Ee][Ss])
+                ;;
+            *)
+                die "Aborted."
+                ;;
+        esac
+    else
+        die "Non-interactive mode requires --yes."
+    fi
 fi
 
-log "cloning $REPO_URL -> $DEST"
+# ---------------------------------------------------------------------------
+# Destination checks
+# ---------------------------------------------------------------------------
+
+if [ -e "$DEST" ]; then
+    if [ ! -d "$DEST" ]; then
+        die "$DEST exists but is not a directory."
+    fi
+
+    if [ -n "$(ls -A "$DEST" 2>/dev/null)" ]; then
+        die "$DEST exists and is not empty. Move it aside or choose another directory."
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# Clone
+# ---------------------------------------------------------------------------
+
+log "Cloning repository..."
 git clone "$REPO_URL" "$DEST"
+
 cd "$DEST"
 
-log "writing variables.nix"
+[ -f variables.nix ] \
+    || die "variables.nix was not found in the repository."
+
+[ -d hosts/nixos ] \
+    || die "hosts/nixos directory was not found."
+
+# ---------------------------------------------------------------------------
+# Write variables
+# ---------------------------------------------------------------------------
+
+log "Writing variables.nix..."
+
 set_var username "$USERNAME"
 set_var hostname "$HOSTNAME"
 set_var timezone "$TIMEZONE"
 set_var gpu "$GPU"
-set_var bootloader "$([ "$BOOT" = uefi ] && printf 'systemd-boot' || printf 'grub')"
-[ "$BOOT" = bios ] && set_var grubDevice "$DISK"
 
-if [ "$GPU" != nvidia ]; then
-  log "heads up: this repo currently assumes an NVIDIA card."
-  log "per-GPU module switching lands next - until then, expect breakage past this point."
-fi
-if [ "$BOOT" != uefi ]; then
-  log "heads up: grub wiring for BIOS boot lands next - UEFI works today."
+if [ "$BOOT" = "uefi" ]; then
+    set_var bootloader "systemd-boot"
+else
+    set_var bootloader "grub"
+    set_var grubDevice "$DISK"
 fi
 
-log "regenerating hardware-configuration.nix for this machine"
-cp hosts/nixos/hardware-configuration.nix /tmp/hardware-configuration.nix.bak
-sudo nixos-generate-config --show-hardware-config > hosts/nixos/hardware-configuration.nix
-log "previous file backed up to /tmp/hardware-configuration.nix.bak (do not use it)"
+# ---------------------------------------------------------------------------
+# Hardware configuration
+# ---------------------------------------------------------------------------
 
-log "checking flake evaluates"
-nix flake check --no-build --flake "$DEST" >/dev/null \
-  || die "flake check failed - fix errors before switching."
+HARDWARE_CONFIG="hosts/nixos/hardware-configuration.nix"
+
+if [ -f "$HARDWARE_CONFIG" ]; then
+    BACKUP="/tmp/hardware-configuration.nix.bak"
+
+    log "Backing up existing hardware configuration to $BACKUP"
+    cp "$HARDWARE_CONFIG" "$BACKUP"
+fi
+
+log "Generating hardware-configuration.nix for this machine..."
+
+sudo nixos-generate-config \
+    --show-hardware-config \
+    > "$HARDWARE_CONFIG"
+
+[ -s "$HARDWARE_CONFIG" ] \
+    || die "Generated hardware-configuration.nix is empty."
+
+# ---------------------------------------------------------------------------
+# Validation
+# ---------------------------------------------------------------------------
+
+log "Checking flake..."
+
+if ! nix flake check --no-build --flake "$DEST"; then
+    die "flake check failed. The system was NOT switched."
+fi
+
+# ---------------------------------------------------------------------------
+# GPU warning
+# ---------------------------------------------------------------------------
+
+case "$GPU" in
+    nvidia)
+        log "GPU selected: NVIDIA"
+        ;;
+
+    amd)
+        log "GPU selected: AMD"
+        ;;
+
+    intel)
+        log "GPU selected: Intel"
+        ;;
+esac
+
+# ---------------------------------------------------------------------------
+# Rebuild
+# ---------------------------------------------------------------------------
 
 if [ "$SWITCH" -eq 1 ]; then
-  log "switching to the new system (this takes a while on first run)"
-  sudo nixos-rebuild switch --flake "$DEST#$HOSTNAME"
-  log "done - reboot recommended."
+    log "Switching to the new system..."
+    log "This may take a while on the first build."
+
+    sudo nixos-rebuild switch \
+        --flake "$DEST#$HOSTNAME"
+
+    log "Installation complete."
+    log "A reboot is recommended."
 else
-  log "skipping switch (--no-switch). When ready:"
-  log "  sudo nixos-rebuild switch --flake \"$DEST#$HOSTNAME\""
+    log "Skipping nixos-rebuild switch (--no-switch)."
+    log "When ready, run:"
+    log "  sudo nixos-rebuild switch --flake \"$DEST#$HOSTNAME\""
 fi
+```
