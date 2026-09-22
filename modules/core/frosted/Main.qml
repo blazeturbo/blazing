@@ -43,7 +43,6 @@ Rectangle {
         if (h === 0) h = 12;
         var m = d.getMinutes();
         timeText.text = h + ":" + (m < 10 ? "0" : "") + m;
-        ampmText.text = d.getHours() < 12 ? "AM" : "PM";
         dateText.text = Qt.formatDate(d, "dddd • d MMM").toUpperCase();
     }
 
@@ -61,7 +60,7 @@ Rectangle {
         passFade.start();
         buttonFade.start();
         if (nameField.text.length > 0)
-            passwordField.forceActiveFocus();
+            pwInput.forceActiveFocus();
         else
             nameField.forceActiveFocus();
     }
@@ -70,7 +69,7 @@ Rectangle {
         target: sddm
         function onLoginFailed() {
             passwordField.text = "";
-            passwordField.forceActiveFocus();
+            pwInput.forceActiveFocus();
             shake.start();
         }
     }
@@ -113,7 +112,7 @@ Rectangle {
             id: entrance
             ParallelAnimation {
                 NumberAnimation { target: content; property: "opacity"; to: 1; duration: 700; easing.type: Easing.OutCubic }
-                NumberAnimation { target: contentShift; property: "y"; from: 26; to: 0; duration: 700; easing.type: Easing.OutCubic }
+                NumberAnimation { target: contentShift; property: "y"; from: 26; to: 0; duration: 750; easing.type: Easing.OutBack }
             }
         }
 
@@ -122,25 +121,13 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 6
 
-            Row {
+            Text {
+                id: timeText
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 10
-
-                Text {
-                    id: timeText
-                    font.family: config.fontFamily
-                    font.pointSize: 92
-                    font.weight: Font.Light
-                    color: root.ink
-                }
-                Text {
-                    id: ampmText
-                    anchors.baseline: timeText.baseline
-                    font.family: config.fontFamily
-                    font.pointSize: 26
-                    font.weight: Font.DemiBold
-                    color: root.accent
-                }
+                font.family: config.fontFamily
+                font.pointSize: 92
+                font.weight: Font.Light
+                color: root.ink
             }
             Text {
                 id: dateText
@@ -155,8 +142,8 @@ Rectangle {
         // Login card.
         Rectangle {
             id: card
-            width: 360
-            height: 250
+            width: 460
+            height: 268
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 22
             color: "#8c14161c"
@@ -174,13 +161,13 @@ Rectangle {
 
             Column {
                 anchors.centerIn: parent
-                width: parent.width - 64
-                spacing: 14
+                width: parent.width - 72
+                spacing: 16
 
                 TextField {
                     id: nameField
                     width: parent.width
-                    height: 46
+                    height: 52
                     opacity: 0
                     placeholderText: "name"
                     horizontalAlignment: Text.AlignHCenter
@@ -189,9 +176,9 @@ Rectangle {
                     color: root.ink
                     placeholderTextColor: "#80ffffff"
                     selectByMouse: true
-                    KeyNavigation.tab: passwordField
+                    KeyNavigation.tab: pwInput
                     Keys.onReturnPressed: {
-                        if (nameField.text.length > 0) passwordField.forceActiveFocus();
+                        if (nameField.text.length > 0) pwInput.forceActiveFocus();
                     }
                     background: Rectangle {
                         radius: 12
@@ -208,55 +195,99 @@ Rectangle {
                     }
                 }
 
-                TextField {
+                // Custom password display (Caelestia-style): invisible text
+                // drives a row of popping dots; native echo unused.
+                Item {
                     id: passwordField
                     width: parent.width
-                    height: 46
+                    height: 52
                     opacity: 0
-                    placeholderText: "password"
-                    horizontalAlignment: Text.AlignHCenter
-                    echoMode: TextInput.Password
-                    passwordCharacter: "·"
-                    font.family: config.fontFamily
-                    font.pointSize: 13
-                    color: root.ink
-                    placeholderTextColor: "#80ffffff"
-                    selectByMouse: true
-                    KeyNavigation.backtab: nameField
-                    Keys.onReturnPressed: tryLogin()
-                    onTextChanged: pwPulse.restart()
-                    transformOrigin: Item.Center
-                    transform: Scale { id: pwScale }
-                    background: Rectangle {
+                    property alias text: pwInput.text
+                    property int length: pwInput.length
+
+                    Rectangle {
+                        anchors.fill: parent
                         radius: 12
-                        color: passwordField.activeFocus ? "#2effffff" : "#14ffffff"
-                        border.color: passwordField.activeFocus ? root.accent : "transparent"
+                        color: pwInput.activeFocus ? "#2effffff" : "#14ffffff"
+                        border.color: pwInput.activeFocus ? root.accent : "transparent"
                         border.width: 1
                         Behavior on color { ColorAnimation { duration: 200 } }
                         Behavior on border.color { ColorAnimation { duration: 200 } }
                     }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "password"
+                        font.family: config.fontFamily
+                        font.pointSize: 13
+                        color: "#80ffffff"
+                        opacity: pwInput.length > 0 ? 0 : 1
+                        Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                    }
+
+                    ListView {
+                        anchors.centerIn: parent
+                        width: Math.min(contentWidth, parent.width - 32)
+                        height: 16
+                        clip: true
+                        orientation: Qt.Horizontal
+                        spacing: 8
+                        interactive: false
+                        model: pwInput.length
+                        delegate: Rectangle {
+                            width: 13
+                            height: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            transformOrigin: Item.Center
+                            radius: 6.5
+                            color: root.accent
+                        }
+                        add: Transition {
+                            ParallelAnimation {
+                                NumberAnimation { property: "scale"; from: 0; to: 1; duration: 220; easing.type: Easing.OutBack }
+                                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 160 }
+                            }
+                        }
+                        displaced: Transition {
+                            NumberAnimation { properties: "x,y"; duration: 180; easing.type: Easing.OutCubic }
+                        }
+                        remove: Transition {
+                            ParallelAnimation {
+                                NumberAnimation { property: "scale"; to: 0.4; duration: 150 }
+                                NumberAnimation { property: "opacity"; to: 0; duration: 150 }
+                            }
+                        }
+                    }
+
+                    TextInput {
+                        id: pwInput
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: config.fontFamily
+                        font.pointSize: 13
+                        color: "transparent"
+                        selectionColor: root.accent
+                        selectByMouse: true
+                        cursorDelegate: Rectangle {
+                            width: 2
+                            color: "#bfffffff"
+                        }
+                        KeyNavigation.backtab: nameField
+                        Keys.onReturnPressed: tryLogin()
+                    }
+
                     SequentialAnimation {
                         id: passFade
                         PauseAnimation { duration: 260 }
                         NumberAnimation { target: passwordField; property: "opacity"; to: 1; duration: 450; easing.type: Easing.OutCubic }
-                    }
-                    SequentialAnimation {
-                        id: pwPulse
-                        ParallelAnimation {
-                            NumberAnimation { target: pwScale; property: "xScale"; to: 1.025; duration: 70 }
-                            NumberAnimation { target: pwScale; property: "yScale"; to: 1.025; duration: 70 }
-                        }
-                        ParallelAnimation {
-                            NumberAnimation { target: pwScale; property: "xScale"; to: 1.0; duration: 110 }
-                            NumberAnimation { target: pwScale; property: "yScale"; to: 1.0; duration: 110 }
-                        }
                     }
                 }
 
                 Button {
                     id: loginButton
                     width: parent.width
-                    height: 46
+                    height: 52
                     opacity: 0
                     text: "log in"
                     font.family: config.fontFamily
