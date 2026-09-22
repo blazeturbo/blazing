@@ -24,14 +24,18 @@ in {
         # -x: best audio -> mp3. Thumbnail embedded as cover art so kew
         # always has an image. Tags: "Artist - Title" video titles get
         # split into artist/title (no " - " -> untouched, nothing breaks),
-        # artist falls back to uploader, generic suffixes stripped.
+        # artist falls back to uploader, and EVERY parenthetical group is
+        # nuked — slowed, instrumental, official, all of it, nobody cares.
+        # Bracketed junk (HD/4K/lyric tags) goes too, specific tokens only.
         # NOTE: filenames use the parsed (clean) title, not the raw video
         # title, so new downloads are named tidier than old ones.
         exec yt-dlp \
           -x --audio-format mp3 --audio-quality 0 \
           --embed-thumbnail --convert-thumbnails jpg \
           --no-playlist --embed-metadata \
+          --replace-in-metadata "title" " \\([^)]*\\)" "" \
           --replace-in-metadata "title" " ?[\\(\\[](Official Music Video|Official Video|Official Audio|Official Lyric Video|Lyric Video|Lyrics?|HD|4K)[\\)\\]]" "" \
+          --replace-in-metadata "title" " ?\\[[^\\]]*\\]" "" \
           --parse-metadata "title:%(artist)s - %(title)s" \
           --parse-metadata "%(artist,uploader)s:%(meta_artist)s" \
           -o "$HOME/Music/%(title)s.%(ext)s" "$@"
