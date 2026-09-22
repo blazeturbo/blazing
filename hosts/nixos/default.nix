@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 let
   vars = import ../../variables.nix;
 in {
@@ -9,6 +9,7 @@ in {
     ../../modules/core/network.nix
     ../../modules/core/nvidia.nix
     ../../modules/core/scheduler.nix
+    ../../modules/core/sddm.nix
     ../../modules/core/stylix.nix
     ../../modules/core/rainbow.nix
   ];
@@ -45,10 +46,12 @@ in {
     LC_TIME = "fr_FR.UTF-8";
   };
 
-  # Display Manager: Ly TUI Login Manager with Matrix animation & big clock (Themed by Stylix)
+  # Display Manager, picked by variables.nix loginManager ("ly" | "sddm"
+  # | "pixie"). Ly: TUI login with Matrix animation & big clock (Stylix).
+  # SDDM/pixie live in modules/core/sddm.nix; only one DM runs at a time.
   services.displayManager.gdm.enable = false;
   services.desktopManager.gnome.enable = false;
-  services.displayManager.ly = {
+  services.displayManager.ly = lib.mkIf (vars.loginManager == "ly") {
     enable = true;
     settings = let
       c = config.lib.stylix.colors;
