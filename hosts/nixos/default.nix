@@ -9,6 +9,7 @@ in {
     ../../modules/core/network.nix
     ../../modules/core/nvidia.nix
     ../../modules/core/scheduler.nix
+    ../../modules/core/performance.nix
     ../../modules/core/sddm.nix
     ../../modules/core/stylix.nix
     ../../modules/core/rainbow.nix
@@ -115,22 +116,40 @@ in {
   # Enable zsh system-wide (required for it to be a valid login shell)
   programs.zsh.enable = true;
 
-  # GameMode: on-demand gaming tweaks (perf governor, higher priority).
-  # Sober already requests it; this makes the request actually work.
-  # Declarative: survives rebuilds and flake updates untouched.
-  programs.gamemode.enable = true;
+  # GameMode: gaming tweaks while Sober runs (higher priority,
+  # max NVIDIA PowerMizer). Governor stays `performance` always —
+  # idle AND gaming, no powersave switching anywhere.
+  # Sober is forced through `gamemoderun` via the desktop override +
+  # `sober` wrapper in modules/home (so every launch path requests it).
+  programs.gamemode = {
+    enable = true;
+    settings = {
+      general = {
+        desiredgov = "performance";
+        defaultgov = "performance";
+        softrealtime = "auto";
+        renice = 10;
+        ioprio = 0;
+        inhibit_screensaver = 1;
+      };
+      gpu = {
+        apply_gpu_optimisations = "accept-responsibility";
+        gpu_device = 0;
+        nv_powermizer_mode = 1;
+        amd_performance_level = "high";
+      };
+    };
+  };
 
-  # CPU at full ramp, always: sustained high clocks in games instead of
-  # parking at the 800 MHz floor under load. Safe (stock Intel p-state,
-  # no overclock, no voltage changes); costs warmer idle + more fan.
-  # Declarative: survives rebuilds and flake updates untouched.
-  powerManagement.cpuFreqGovernor = "performance";
+  # Governor lives in modules/core/performance.nix behind
+  # vars.performanceMode (true = performance always). Kept out of here
+  # so the toggle is real: flipping it to false drops back to defaults.
 
   # User account
   users.users.${vars.username} = {
     isNormalUser = true;
     description = vars.username;
-    extraGroups = [ "networkmanager" "wheel" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "video" "gamemode" ];
     shell = pkgs.zsh;
   };
 

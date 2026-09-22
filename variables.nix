@@ -29,4 +29,12 @@
   # (custom minimal SDDM theme: name + password only). Only one runs
   # at a time; the others stay configured in the repo, just disabled.
   loginManager = "frosted";
+
+  # Master performance toggle: true = CPU always max (governor
+  # performance + EPP locked to performance by intel_pstate, shallow
+  # C-states), GPU max power + tiny VRAM OC, lavd gaming scheduler.
+  # false = everything in modules/core/performance.nix stays off and
+  # the system falls back to NixOS defaults (quiet/cool idle).
+  # No kernel rebuild either way (boot flags + services only).
+  performanceMode = true;
 }

@@ -125,12 +125,9 @@ in {
       spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6; do ${pkgs.awww}/bin/awww img --namespace=-backdrop ${overviewBlur} && break; sleep 1; done"
       spawn-at-startup "sh" "-c" "sleep 0.5 && systemctl --user restart noctalia || ${pkgs.noctalia}/bin/noctalia"
       spawn-at-startup "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
-      // GPU: let it use its full stock power (NOT overclocking — no volts,
-      // no clocks beyond spec). PowerMizer "Prefer Maximum Performance"
-      // instead of Adaptive. Applied with retries: at session start the
-      // driver often isn't ready yet, and the old fire-once version died
-      // silently behind || true. Log lives at ~/.cache/nvidia-powermizer.log.
-      spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6 7 8 9 10; do nvidia-settings -a '[gpu:0]/GpuPowerMizerMode=1' >>$HOME/.cache/nvidia-powermizer.log 2>&1 && break; sleep 2; done"
+      // GPU PowerMizer is on-demand via GameMode (nv_powermizer_mode=1
+      // in hosts/nixos/default.nix), NOT forced at login: idle stays
+      // Adaptive/cool, max-perf only while Sober holds GameMode.
     '';
     "niri/environment.kdl".source = ./environment.kdl;
     "niri/keybinds.kdl".source = ./keybinds.kdl;

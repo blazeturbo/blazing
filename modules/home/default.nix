@@ -39,6 +39,12 @@
     unrar
     cmatrix
     eza
+    # Sober launcher: ALWAYS through gamemoderun (perf governor +
+    # max NVIDIA PowerMizer on-demand, idle untouched). Terminal +
+    # scripts use `sober`; GUI uses the desktop override below.
+    (writeShellScriptBin "sober" ''
+      exec ${gamemode}/bin/gamemoderun flatpak run --branch=stable --arch=x86_64 --command=sober --file-forwarding org.vinegarhq.Sober -- "$@"
+    '')
   ];
 
   # Default browser = Helium (AppImage, registered via
@@ -65,6 +71,32 @@
     "applications/qt6ct.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/kvantummanager.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/nvidia-settings.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
+    # Sober override: shadow the flatpak export so EVERY GUI launch
+    # (launcher, mime handler, autostart) goes through gamemoderun.
+    # ~/.local/share/applications wins over /var/lib/flatpak/exports.
+    # No idle cost: GameMode engages only while Sober runs.
+    "applications/org.vinegarhq.Sober.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Sober
+      GenericName=Roblox Player
+      Comment=Play, chat & explore on Roblox
+      Icon=org.vinegarhq.Sober
+      Keywords=roblox;vinegar;game;gaming;social;experience;launcher;
+      MimeType=x-scheme-handler/roblox;x-scheme-handler/roblox-player;
+      Categories=GNOME;GTK;Game;
+      Terminal=false
+      PrefersNonDefaultGPU=true
+      SingleMainWindow=true
+      Exec=gamemoderun flatpak run --branch=stable --arch=x86_64 --command=sober --file-forwarding org.vinegarhq.Sober -- @@u %u @@
+      Actions=open-settings;
+      X-Flatpak-Tags=proprietary;
+      X-Flatpak=org.vinegarhq.Sober
+
+      [Desktop Action open-settings]
+      Name=Settings
+      Exec=gamemoderun flatpak run --branch=stable --arch=x86_64 --command=sober org.vinegarhq.Sober config
+    '';
     "applications/mpv.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/umpv.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
   };
