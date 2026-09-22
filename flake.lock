@@ -219,6 +219,22 @@
         "type": "github"
       }
     },
+    "opencode-pin": {
+      "locked": {
+        "lastModified": 1788716593,
+        "narHash": "sha256-/Q9qy4FXHB3Lq0tbC2WokX7vuiE8ckckNudAzekGaQM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "590d72952b052366ecf4060c8bf711d7f2b0d249",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "590d72952b052366ecf4060c8bf711d7f2b0d249",
+        "type": "github"
+      }
+    },
     "pixie-sddm": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -244,6 +260,7 @@
       "inputs": {
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "opencode-pin": "opencode-pin",
         "pixie-sddm": "pixie-sddm",
         "spicetify-nix": "spicetify-nix",
         "stylix": "stylix"

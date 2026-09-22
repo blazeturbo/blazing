@@ -21,6 +21,7 @@
     ./cli/eyecandy.nix
     ./cli/git.nix
     ./cli/music.nix
+    ./cli/opencode.nix
     ./discord.nix
   ];
 
