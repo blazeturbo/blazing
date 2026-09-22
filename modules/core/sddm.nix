@@ -1,8 +1,10 @@
 # SDDM login manager (+ pixie-sddm Material theme option).
 # Enabled only when variables.nix loginManager is "sddm" or "pixie";
 # otherwise this whole module is inert and Ly stays in charge.
-# Pixie theme follows the system: wallpaper as background, Stylix accent,
-# Stylix monospace. X11 backend on purpose (sddm-wayland + NVIDIA is flaky).
+# Pixie theme follows the system: wallpaper as background, vendored avatar,
+# Stylix accent/card/text, Montserrat UI font (mono stays in terminals).
+# Blur + animations are built into the theme's Qt6 engine (always on).
+# X11 backend on purpose (sddm-wayland + NVIDIA is flaky).
 { config, pkgs, inputs, lib, ... }:
 let
   vars = import ../../variables.nix;
@@ -11,9 +13,12 @@ let
   useSddm = vars.loginManager == "sddm" || usePixie;
   pixieTheme = inputs.pixie-sddm.packages.${pkgs.stdenv.hostPlatform.system}.pixie-sddm.override {
     background = vars.stylixImage;
+    avatar = ./pixie-avatar.png;
     autoColor = false;
     accentColor = "#${c.base0D}";
-    fontFamily = "DejaVuSansM Nerd Font Mono";
+    backgroundColor = "#${c.base00}";
+    textColor = "#${c.base05}";
+    fontFamily = "Montserrat";
   };
 in lib.mkIf useSddm {
   # SDDM's greeter needs an X server behind it (SDDM's own Wayland mode +
