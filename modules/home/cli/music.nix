@@ -19,17 +19,22 @@ in {
   home.packages = with pkgs; [
     kew
     chafa # kew renders covers through chafa
+    sptlrx # live synced lyrics for whatever is playing (follows kew via MPRIS)
+    playerctl # `playerctl -l` shows MPRIS names if you ever need the whitelist
     # ytmp3: paste a YouTube URL, get an MP3 in ~/Music (kew's library).
     (writeShellApplication {
       name = "ytmp3";
-      runtimeInputs = [ yt-dlp ffmpeg ];
+      runtimeInputs = [ yt-dlp ffmpeg atomicparsley ];
       text = ''
         if [ "$#" -eq 0 ]; then
           echo "usage: ytmp3 <youtube-url> [more urls...]" >&2
           exit 1
         fi
+        # -x: best audio -> mp3. Thumbnail embedded as cover art so kew
+        # always has an image; metadata embedded for artist/title.
         exec yt-dlp \
           -x --audio-format mp3 --audio-quality 0 \
+          --embed-thumbnail --convert-thumbnails jpg \
           --no-playlist --add-metadata \
           -o "$HOME/Music/%(title)s.%(ext)s" "$@"
       '';
@@ -80,6 +85,16 @@ in {
     status.warning=${gold}
     status.error=${red}
     status.success=${green}
+  '';
+
+  # sptlrx: live synced lyrics (lrclib) for whatever is playing.
+  # `player: mpris` with an empty whitelist follows the first available
+  # MPRIS player — that's kew while it's running. Just run `sptlrx`
+  # in a split next to kew. No Spotify account needed in this mode.
+  xdg.configFile."sptlrx/config.yaml".text = ''
+    player: mpris
+    mpris:
+      players: []
   '';
 
   # kewrc: library at ~/Music, visualizer on, image covers, our theme.
