@@ -37,7 +37,10 @@ let
 in lib.mkIf useSddm {
   # SDDM's greeter needs an X server behind it (SDDM's own Wayland mode +
   # NVIDIA is still flaky; sessions themselves stay Wayland regardless).
+  # Enabling X drags xterm along; exclude it so it never lands in the
+  # launcher (that stray XTerm entry came from here).
   services.xserver.enable = true;
+  services.xserver.excludePackages = [ pkgs.xterm ];
   # Preselect Niri server-side (the theme's role-scan is the backup).
   services.displayManager.defaultSession = "niri";
   services.displayManager.sddm = {

@@ -176,6 +176,7 @@ Rectangle {
                     color: root.ink
                     placeholderTextColor: "#80ffffff"
                     selectByMouse: true
+                    cursorVisible: false
                     KeyNavigation.tab: pwInput
                     Keys.onReturnPressed: {
                         if (nameField.text.length > 0) pwInput.forceActiveFocus();
@@ -269,10 +270,7 @@ Rectangle {
                         color: "transparent"
                         selectionColor: root.accent
                         selectByMouse: true
-                        cursorDelegate: Rectangle {
-                            width: 2
-                            color: "#bfffffff"
-                        }
+                        cursorVisible: false
                         KeyNavigation.backtab: nameField
                         Keys.onReturnPressed: tryLogin()
                     }
