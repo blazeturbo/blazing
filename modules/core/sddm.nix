@@ -13,7 +13,7 @@ let
     background = vars.stylixImage;
     autoColor = false;
     accentColor = "#${c.base0D}";
-    fontFamily = "MonaspiceNe Nerd Font Mono";
+    fontFamily = "CaskaydiaCove Nerd Font Mono";
   };
 in lib.mkIf useSddm {
   # SDDM's greeter needs an X server behind it (SDDM's own Wayland mode +
