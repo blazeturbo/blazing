@@ -131,4 +131,345 @@ in {
     coverEnabled=1
     coverAnsi=0
   '';
+
+  # Custom layout: replaces kew's default current.layout (all sections
+  # must exist or kew quits — the rest is verbatim upstream v4.3.4).
+  # version MUST match the shipped current.layout for the installed kew
+  # (12 for 4.3.4): on a kew update, re-check upstream and bump it here,
+  # or kew refuses to start. `nix eval` can't catch that; watch it.
+  # What changed vs default: [track] is rebuilt from parts instead of
+  # the monolithic `track` component. The cover gets its own row sized
+  # to 38% of the height, so the square image renders smaller than full
+  # bleed (side padding for free), and metadata/time/visualizer rows sit
+  # immediately below it — no more dead gap, text stays glued to the art.
+  xdg.configFile."kew/layouts/current.layout".text = ''
+    version=12
+
+    [footer_pane]
+
+    row
+    height=fixed:1
+    col=0
+
+    pane
+    component=error_row
+    dirty=footer
+    width=auto
+
+    row
+    height=fixed:1
+    col=0
+
+    pane
+    component=footer
+    dirty=footer
+    width=auto
+
+    [playlist_pane]
+
+    row
+    height=fixed:5
+    col=0
+
+    pane
+    component=logo
+    dirty=visualizer
+    width=auto
+    offsetX=1
+
+    row
+    height=fixed:3
+    col=0
+
+    pane
+    component=playlist_header
+    width=auto
+    offsetX=2
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=playlist_rows
+    dirty=playlist
+    width=auto
+    offsetX=3
+
+    [playlist]
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=side_cover
+    dirty=song
+    width=indent_wide
+
+    pane
+    layout=playlist_pane
+    width=auto
+
+    row
+    height=fixed:2
+    col=indent_normal
+
+    pane
+    layout=footer_pane
+    width=auto
+
+    [library_pane]
+
+    row
+    height=fixed:5
+    col=0
+
+    pane
+    component=logo
+    dirty=visualizer
+    width=auto
+    offsetX=1
+
+    row
+    height=fixed:3
+    col=0
+
+    pane
+    component=library_header
+    width=auto
+    offsetX=2
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=library_rows
+    dirty=library
+    width=auto
+
+    [library]
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=side_cover
+    dirty=song
+    width=indent_wide
+
+    pane
+    layout=library_pane
+    width=auto
+
+    row
+    height=fixed:2
+    col=indent_normal
+
+    pane
+    layout=footer_pane
+    width=auto
+
+    [track]
+
+    row
+    height=fixed:1
+    col=indent
+
+    pane
+    component=track_header
+    width=fixed:1
+
+    row
+    height=percent:38
+    col=indent
+
+    pane
+    component=cover_centered
+    dirty=song
+    width=auto
+
+    row
+    height=fixed:4
+    col=indent
+
+    pane
+    component=metadata
+    dirty=song
+    width=auto
+
+    row
+    height=fixed:1
+    col=indent
+
+    pane
+    component=time_simple_and_vol
+    dirty=visualizer
+    width=auto
+
+    row
+    height=fixed:6
+    col=indent
+
+    pane
+    component=vis_and_progress_bar
+    dirty=visualizer
+    width=auto
+
+    row
+    height=fixed:2
+    col=indent_normal
+
+    pane
+    layout=footer_pane
+    width=auto
+
+    [track_landscape_pane]
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=track_landscape
+    dirty=visualizer
+    width=auto
+
+    [track_landscape]
+
+    row
+    height=window_minus:2
+    col=0
+
+    pane
+    component=landscape_cover
+    dirty=song
+    width=from_height
+
+    pane
+    layout=track_landscape_pane
+    width=auto
+    offsetX=1
+
+    [search_pane]
+
+    row
+    height=fixed:5
+    col=0
+
+    pane
+    component=logo
+    dirty=visualizer
+    width=auto
+    offsetX=1
+
+    row
+    height=fixed:2
+    col=0
+
+    pane
+    component=search_header
+    width=auto
+    offsetX=3
+
+    row
+    height=fixed:2
+    col=0
+
+    pane
+    component=search_box
+    dirty=search
+    width=auto
+    offsetX=3
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=search_results
+    dirty=search
+    width=auto
+    offsetX=2
+
+    [search]
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=side_cover
+    dirty=song
+    width=indent_wide
+
+    pane
+    layout=search_pane
+    dirty=search
+    width=auto
+
+    row
+    height=fixed:2
+    col=indent_normal
+
+    pane
+    layout=footer_pane
+    width=auto
+
+    [help_pane]
+
+    row
+    height=fixed:5
+    col=0
+
+    pane
+    component=logo
+    dirty=visualizer
+    width=auto
+    offsetX=3
+
+    row
+    height=fixed:2
+    col=0
+
+    pane
+    component=version
+    width=auto
+    offsetX=3
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=help
+    width=auto
+    offsetX=2
+
+    [help]
+
+    row
+    height=auto
+    col=0
+
+    pane
+    component=side_cover
+    dirty=song
+    width=indent_wide
+
+    pane
+    layout=help_pane
+    dirty=help
+    width=auto
+
+    row
+    height=fixed:2
+    col=indent_normal
+
+    pane
+    layout=footer_pane
+    width=auto
+  '';
 }
