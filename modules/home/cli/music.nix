@@ -371,6 +371,17 @@ in {
     )
   '';
 
+  # cmus behavior: never stop at the end of a track — always play the
+  # next one, and loop the playlist when there's no next track.
+  # (repeat_current stays false so it advances instead of looping one song.)
+  xdg.configFile."cmus/rc".text = ''
+    set continue=true
+    set repeat=true
+    set repeat_current=false
+    set shuffle=false
+    set follow=true
+  '';
+
   # mpc: tiny CLI to control MPD without opening the TUI.
   # cmus: the minimal one — no daemon, just `cmus`, `:add ~/Music`.
   # It uses terminal color names, and kitty is Stylix-themed, so it
