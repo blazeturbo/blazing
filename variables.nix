@@ -27,5 +27,5 @@
   # Login manager: "ly" (TUI, matrix), "sddm" (stock theme),
   # or "pixie" (SDDM + pixie-sddm Material theme). Only one runs at
   # a time; the others stay configured in the repo, just disabled.
-  loginManager = "ly";
+  loginManager = "pixie";
 }
