@@ -111,8 +111,10 @@ in {
     visualizerHeight=6
     visualizerBrailleMode=0
 
-    # 0=lighten, 1=height brightness, 2=reversed, 3=reversed darken.
-    visualizerColorType=0
+    # Flat single-hue bars in the theme's accent color (party/vibrant
+    # modes splash rainbow colors instead). Modes: 0=lighten, 1=flat,
+    # 2=reversed lighten, 3=party, 4=vibrant, 5=lum vibrant, 6=binning.
+    visualizerColorType=1
 
     # 0=thin bars, 1=double width, 2=auto.
     visualizerBarWidth=2
