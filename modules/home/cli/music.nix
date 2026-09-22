@@ -8,13 +8,6 @@
 { config, pkgs, ... }:
 let
   c = config.lib.stylix.colors;
-  accent = "#${c.base0D}";
-  gold = "#${c.base0A}";
-  subtle = "#${c.base03}";
-  faint = "#${c.base04}";
-  fg = "#${c.base05}";
-  red = "#${c.base08}";
-  green = "#${c.base0B}";
 in {
   home.packages = with pkgs; [
     kew
@@ -41,48 +34,50 @@ in {
 
   # Stylix-derived kew theme (format per the kew-tip creator + upstream
   # THEMES-HOWTO: `name=` header, then `key=#hex` lines).
-  xdg.configFile."kew/themes/stylix.theme".text = ''
+  # Monochrome on purpose: every role reads the SAME Stylix accent.
+  # One hue across all of kew, nothing else touched.
+  xdg.configFile."kew/themes/stylix.theme".text = let one = "#${c.base0D}"; in ''
     # Theme generated from the Stylix palette on every rebuild.
     name=stylix
     author=blazing
 
-    accent=${accent}
-    text=${fg}
-    textDim=${subtle}
-    textMuted=${subtle}
-    logo=${accent}
-    header=${accent}
-    footer=${faint}
-    help=${subtle}
-    link=${accent}
-    nowplaying=${gold}
-    playlist.rownum=${subtle}
-    playlist.title=${fg}
-    playlist.playing=${gold}
-    trackview.title=${fg}
-    trackview.artist=${gold}
-    trackview.album=${fg}
-    trackview.year=${subtle}
-    trackview.time=${subtle}
-    trackview.visualizer=${accent}
-    trackview.lyrics=${faint}
-    library.artist=${accent}
-    library.album=${fg}
-    library.track=${fg}
-    library.enqueued=${subtle}
-    library.playing=${gold}
-    search.label=${accent}
-    search.query=${fg}
-    search.result=${fg}
-    search.enqueued=${subtle}
-    search.playing=${gold}
-    progress.filled=${accent}
-    progress.empty=${subtle}
-    progress.elapsed=${gold}
-    status.info=${accent}
-    status.warning=${gold}
-    status.error=${red}
-    status.success=${green}
+    accent=${one}
+    text=${one}
+    textDim=${one}
+    textMuted=${one}
+    logo=${one}
+    header=${one}
+    footer=${one}
+    help=${one}
+    link=${one}
+    nowplaying=${one}
+    playlist.rownum=${one}
+    playlist.title=${one}
+    playlist.playing=${one}
+    trackview.title=${one}
+    trackview.artist=${one}
+    trackview.album=${one}
+    trackview.year=${one}
+    trackview.time=${one}
+    trackview.visualizer=${one}
+    trackview.lyrics=${one}
+    library.artist=${one}
+    library.album=${one}
+    library.track=${one}
+    library.enqueued=${one}
+    library.playing=${one}
+    search.label=${one}
+    search.query=${one}
+    search.result=${one}
+    search.enqueued=${one}
+    search.playing=${one}
+    progress.filled=${one}
+    progress.empty=${one}
+    progress.elapsed=${one}
+    status.info=${one}
+    status.warning=${one}
+    status.error=${one}
+    status.success=${one}
   '';
 
   # kewrc: library at ~/Music, visualizer on, image covers, our theme.
