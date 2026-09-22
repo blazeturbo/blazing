@@ -375,5 +375,23 @@ in {
   # cmus: the minimal one — no daemon, just `cmus`, `:add ~/Music`.
   # It uses terminal color names, and kitty is Stylix-themed, so it
   # matches the palette with zero config.
-  home.packages = [ pkgs.mpc pkgs.cmus ];
+  home.packages = [
+    pkgs.mpc
+    pkgs.cmus
+    # ytmp3: paste a YouTube URL, get an MP3 in ~/Music.
+    (pkgs.writeShellApplication {
+      name = "ytmp3";
+      runtimeInputs = [ pkgs.yt-dlp pkgs.ffmpeg ];
+      text = ''
+        if [ "$#" -eq 0 ]; then
+          echo "usage: ytmp3 <youtube-url> [more urls...]" >&2
+          exit 1
+        fi
+        exec yt-dlp \
+          -x --audio-format mp3 --audio-quality 0 \
+          --no-playlist --add-metadata \
+          -o "$HOME/Music/%(title)s.%(ext)s" "$@"
+      '';
+    })
+  ];
 }
