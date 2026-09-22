@@ -72,6 +72,9 @@
     "applications/qt6ct.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/kvantummanager.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/nvidia-settings.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
+    # Spotify: hidden from the launcher, NOT uninstalled. Delete this
+    # stub to bring it back, uninstall for real when you decide.
+    "applications/spotify.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     # Sober override: shadow the flatpak export so EVERY GUI launch
     # (launcher, mime handler, autostart) goes through gamemoderun.
     # ~/.local/share/applications wins over /var/lib/flatpak/exports.
