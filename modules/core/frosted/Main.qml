@@ -1,34 +1,35 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Qt5Compat.GraphicalEffects
-import SddmComponents 2.0
 
 // Frosted: nothing but a name field, a password field, and a way in.
 // Frosted-glass card over the blurred wallpaper, one accent, zero chrome:
 // no avatar, no session picker (Niri is preselected), no power buttons.
+//
+// SDDM API notes (verified against greeter sources + Sugar Candy):
+// sessionModel/userModel/config/sddm arrive as context objects (never
+// declare them as types). Session index is tracked locally; the login
+// call takes it directly, like Sugar Candy's selectedSession.
 Rectangle {
     id: root
     anchors.fill: parent
     color: "black"
 
-    // userModel, sessionModel, config, sddm and session all come ready-made
-    // from SDDM itself (context properties) - declaring them as types fails
-    // because they aren't registered QML types ("not a type" crash).
-
     property string accent: config.accentColor
     property string ink: config.textColor
     property bool niriFound: false
+    property int niriSession: sessionModel.lastIndex
 
-    // Backup Niri selector (the server default in defaultSession is the
-    // first line of defense): scan model roles, pin the Niri session.
+    // Pin the Niri session by scanning model roles. Server-side
+    // defaultSession is the first line of defense; this is the second.
     Instantiator {
         model: sessionModel
         delegate: QtObject {
             Component.onCompleted: {
                 var n = ((model.name || "") + " " + (model.file || "")).toLowerCase();
-                if (n.indexOf("niri") !== -1 && !root.niriFound) {
+                if (!root.niriFound && n.indexOf("niri") !== -1) {
                     root.niriFound = true;
-                    session.index = index;
+                    root.niriSession = index;
                 }
             }
         }
@@ -36,7 +37,7 @@ Rectangle {
 
     function tryLogin() {
         if (nameField.text.length > 0)
-            sddm.login(nameField.text, passwordField.text, session.index);
+            sddm.login(nameField.text, passwordField.text, root.niriSession);
     }
 
     Component.onCompleted: {
@@ -161,7 +162,6 @@ Rectangle {
                 text: "log in"
                 font.family: config.fontFamily
                 font.pointSize: 13
-                font.capitalization: Font.AllLowercase
                 onClicked: tryLogin()
                 background: Rectangle {
                     radius: 12

@@ -38,6 +38,8 @@ in lib.mkIf useSddm {
   # SDDM's greeter needs an X server behind it (SDDM's own Wayland mode +
   # NVIDIA is still flaky; sessions themselves stay Wayland regardless).
   services.xserver.enable = true;
+  # Preselect Niri server-side (the theme's role-scan is the backup).
+  services.displayManager.defaultSession = "niri";
   services.displayManager.sddm = {
     enable = true;
     package = pkgs.kdePackages.sddm;
