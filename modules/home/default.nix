@@ -17,6 +17,7 @@
     ./cli/cliphist.nix
     ./cli/eyecandy.nix
     ./cli/git.nix
+    ./cli/music.nix
     ./spicetify.nix
     ./discord.nix
   ];
