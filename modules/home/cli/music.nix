@@ -100,7 +100,8 @@ in {
 
     path=${config.home.homeDirectory}/Music
     theme=stylix
-    allowNotifications=1
+    # 0 = no desktop popup on every track change.
+    allowNotifications=0
     hideLogo=0
     hideHelp=0
 
@@ -283,12 +284,20 @@ in {
     width=fixed:1
 
     row
-    height=percent:38
+    height=percent:34
     col=indent
 
     pane
     component=cover_centered
     dirty=song
+    width=auto
+
+    row
+    height=fixed:3
+    col=indent
+
+    pane
+    component=empty
     width=auto
 
     row
