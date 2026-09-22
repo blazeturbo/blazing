@@ -11,8 +11,9 @@ Rectangle {
     anchors.fill: parent
     color: "black"
 
-    TextConstants { id: textConstants }
-    UserModel { id: userModel }
+    // userModel, sessionModel, config, sddm and session all come ready-made
+    // from SDDM itself (context properties) - declaring them as types fails
+    // because they aren't registered QML types ("not a type" crash).
 
     property string accent: config.accentColor
     property string ink: config.textColor
