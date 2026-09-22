@@ -1,0 +1,10 @@
+[SddmGreeterTheme]
+Name=Frosted
+Description=Minimal frosted-glass login: name and password only
+Author=blazeturbo
+Version=1.0
+License=MIT
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=frosted
+Theme-API=2.0

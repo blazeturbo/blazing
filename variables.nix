@@ -25,7 +25,8 @@
   launcher = "noctalia";
 
   # Login manager: "ly" (TUI, matrix), "sddm" (stock theme),
-  # or "pixie" (SDDM + pixie-sddm Material theme). Only one runs at
-  # a time; the others stay configured in the repo, just disabled.
-  loginManager = "pixie";
+  # "pixie" (SDDM + pixie-sddm Material theme), or "frosted"
+  # (custom minimal SDDM theme: name + password only). Only one runs
+  # at a time; the others stay configured in the repo, just disabled.
+  loginManager = "frosted";
 }

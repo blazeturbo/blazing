@@ -1,6 +1,6 @@
-# SDDM login manager (+ pixie-sddm Material theme option).
-# Enabled only when variables.nix loginManager is "sddm" or "pixie";
-# otherwise this whole module is inert and Ly stays in charge.
+# SDDM login manager (+ pixie-sddm Material theme / frosted custom theme).
+# Enabled only when variables.nix loginManager is "sddm", "pixie" or
+# "frosted"; otherwise this whole module is inert and Ly stays in charge.
 # Pixie theme follows the system: wallpaper as background, vendored avatar,
 # Stylix accent/card/text, Montserrat UI font (mono stays in terminals).
 # Blur + animations are built into the theme's Qt6 engine (always on).
@@ -10,7 +10,8 @@ let
   vars = import ../../variables.nix;
   c = config.lib.stylix.colors;
   usePixie = vars.loginManager == "pixie";
-  useSddm = vars.loginManager == "sddm" || usePixie;
+  useFrosted = vars.loginManager == "frosted";
+  useSddm = vars.loginManager == "sddm" || usePixie || useFrosted;
   pixieTheme = inputs.pixie-sddm.packages.${pkgs.stdenv.hostPlatform.system}.pixie-sddm.override {
     background = vars.stylixImage;
     avatar = ./pixie-avatar.png;
@@ -20,6 +21,19 @@ let
     textColor = "#${c.base05}";
     fontFamily = "Montserrat";
   };
+  frostedTheme = pkgs.runCommand "frosted-sddm" { } ''
+    mkdir -p $out/share/sddm/themes/frosted
+    cp ${./frosted/Main.qml} $out/share/sddm/themes/frosted/Main.qml
+    cp ${./frosted/metadata.desktop} $out/share/sddm/themes/frosted/metadata.desktop
+    cat > $out/share/sddm/themes/frosted/theme.conf <<'EOF'
+    [General]
+    background=${vars.stylixImage}
+    accentColor=#${c.base0D}
+    backgroundColor=#${c.base00}
+    textColor=#${c.base05}
+    fontFamily=Montserrat
+    EOF
+  '';
 in lib.mkIf useSddm {
   # SDDM's greeter needs an X server behind it (SDDM's own Wayland mode +
   # NVIDIA is still flaky; sessions themselves stay Wayland regardless).
@@ -27,7 +41,7 @@ in lib.mkIf useSddm {
   services.displayManager.sddm = {
     enable = true;
     package = pkgs.kdePackages.sddm;
-    theme = if usePixie then "pixie" else null;
+    theme = if usePixie then "pixie" else if useFrosted then "frosted" else null;
     settings.Theme.CursorTheme = "breeze_cursors";
     extraPackages = with pkgs.kdePackages; [
       qtsvg
@@ -36,8 +50,8 @@ in lib.mkIf useSddm {
     ];
   };
 
-  environment.systemPackages = lib.mkIf usePixie [
-    pixieTheme
-    pkgs.kdePackages.breeze
-  ];
+  environment.systemPackages =
+    lib.optional usePixie pixieTheme
+    ++ lib.optional usePixie pkgs.kdePackages.breeze
+    ++ lib.optional useFrosted frostedTheme;
 }
