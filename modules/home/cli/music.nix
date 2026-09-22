@@ -59,7 +59,13 @@ in {
     trackview.album=${one}
     trackview.year=${one}
     trackview.time=${one}
-    trackview.visualizer=${one}
+    # ANSI blue (index 4), NOT hex, on purpose: kew's spectrum renderer
+    # mixes the *cover's* brightest color into any RGB visualizer color
+    # (brightness swap in draw_spectrum_to_buf), which is why the bars
+    # stayed pink. An ANSI value bypasses that path entirely and kitty
+    # renders ANSI blue as this same Stylix base0D. Keep flat mode (1)
+    # in kewrc — the cover-palette modes (vibrant/kmeans) would still win.
+    trackview.visualizer=4
     trackview.lyrics=${one}
     library.artist=${one}
     library.album=${one}
