@@ -317,8 +317,11 @@ in {
     component=empty
     width=auto
 
+    # Metadata block, height=2: kew gates each line on region height
+    # (title needs >=1, artist >=2, album >=3, year >=4), so a 2-row pane
+    # draws ONLY title + artist. No album/year noise, no tag surgery.
     row
-    height=fixed:4
+    height=fixed:2
     col=indent
 
     pane
