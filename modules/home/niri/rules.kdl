@@ -120,6 +120,17 @@ window-rule {
     min-height 100
 }
 
+// Sober skips the compositor eye-candy (no per-frame blur/xray cost).
+// Shadows deliberately left alone.
+window-rule {
+    match app-id=r#"org\.vinegarhq\.Sober"#
+
+    background-effect {
+        xray false
+        blur false
+    }
+}
+
 // See-through Spotify and Equibop (0.8, like kitty). Per-app only on
 // purpose: nothing global, Sober and everything else stay fully opaque.
 window-rule {
