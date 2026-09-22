@@ -22,11 +22,18 @@ in {
           exit 1
         fi
         # -x: best audio -> mp3. Thumbnail embedded as cover art so kew
-        # always has an image; metadata embedded for artist/title.
+        # always has an image. Tags: "Artist - Title" video titles get
+        # split into artist/title (no " - " -> untouched, nothing breaks),
+        # artist falls back to uploader, generic suffixes stripped.
+        # NOTE: filenames use the parsed (clean) title, not the raw video
+        # title, so new downloads are named tidier than old ones.
         exec yt-dlp \
           -x --audio-format mp3 --audio-quality 0 \
           --embed-thumbnail --convert-thumbnails jpg \
-          --no-playlist --add-metadata \
+          --no-playlist --embed-metadata \
+          --replace-in-metadata "title" " ?[\\(\\[](Official Music Video|Official Video|Official Audio|Official Lyric Video|Lyric Video|Lyrics?|HD|4K)[\\)\\]]" "" \
+          --parse-metadata "title:%(artist)s - %(title)s" \
+          --parse-metadata "%(artist,uploader)s:%(meta_artist)s" \
           -o "$HOME/Music/%(title)s.%(ext)s" "$@"
       '';
     })
@@ -329,12 +336,33 @@ in {
     dirty=song
     width=auto
 
+    # Breathing room between the text block and the time line.
+    row
+    height=fixed:1
+    col=indent
+
+    pane
+    component=empty
+    width=auto
+
     row
     height=fixed:1
     col=indent
 
     pane
     component=time_simple_and_vol
+    dirty=visualizer
+    width=auto
+
+    # Synced-lyrics line when the track has timed lyrics, plain gap when
+    # it doesn't. Either way the visualizer sits one row lower, matching
+    # the reference rhythm (title/artist/gap/time/lyrics-or-gap/bars).
+    row
+    height=fixed:1
+    col=indent
+
+    pane
+    component=timestamped_lyrics
     dirty=visualizer
     width=auto
 
