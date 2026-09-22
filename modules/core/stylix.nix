@@ -12,8 +12,8 @@ in {
     # (see environment.sessionVariables in hosts/nixos/default.nix).
     fonts = {
       monospace = {
-        package = pkgs.callPackage ./fonts/jetbrains-mono-nerd.nix { };
-        name = "JetBrainsMono Nerd Font Mono";
+        package = pkgs.callPackage ./fonts/mononoki/mononoki-nerd.nix { };
+        name = "Mononoki Nerd Font Mono";
       };
       sansSerif = {
         package = pkgs.montserrat;
