@@ -100,6 +100,12 @@ in {
 
     path=${config.home.homeDirectory}/Music
     theme=stylix
+    # Pin Truecolor theme-file mode (0=default ANSI, 1=one album color,
+    # 2=theme file, 3=album colors, 4=neutral). Fresh kew defaults to 3,
+    # which is why the bars/text followed the cover instead of Stylix.
+    # 2 forces our generated stylix.theme always. (`i` still cycles in
+    # the session, but every rebuild resets it here.)
+    colorMode=2
     # 0 = no desktop popup on every track change.
     allowNotifications=0
     hideLogo=0
@@ -275,6 +281,16 @@ in {
 
     [track]
 
+    # Top flexible spacer: together with the bottom one it splits leftover
+    # space evenly, vertically centering the whole block (flex items-center).
+    row
+    height=auto
+    col=indent
+
+    pane
+    component=empty
+    width=auto
+
     row
     height=fixed:1
     col=indent
@@ -325,6 +341,16 @@ in {
     pane
     component=vis_and_progress_bar
     dirty=visualizer
+    width=auto
+
+    # Bottom flexible spacer: other half of the centering. Footer rides
+    # at the bottom of the centered block instead of the terminal edge.
+    row
+    height=auto
+    col=indent
+
+    pane
+    component=empty
     width=auto
 
     row
