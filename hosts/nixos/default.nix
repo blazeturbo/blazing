@@ -173,52 +173,10 @@ in {
     binfmt = true;
   };
 
-  # Flatpak apps support + the Flathub remote declared once, so it
-  # survives rebuilds (plain `flatpak remote-add` alone would too, but
-  # this way a fresh machine gets it automatically).
-  services.flatpak.enable = true;
-  systemd.services.flatpak-add-flathub = {
-    description = "Add Flathub remote if missing";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    path = with pkgs; [ flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    '';
-    serviceConfig.Type = "oneshot";
-  };
-
-  # Flatpak NVIDIA GL/Vulkan runtimes, ALWAYS exactly matching the live
-  # host driver: reads /sys/module/nvidia/version at boot (dots->dashes)
-  # and installs that GL + GL32 runtime if missing. Sandboxed apps (Sober)
-  # mount org.freedesktop.Platform.GL.nvidia-<host-version>; a mismatch
-  # breaks their Vulkan. Self-maintaining across driver updates — no
-  # manual version bumps. If Flathub hasn't published the brand-new
-  # runtime yet, install is retried via the log message on next boot /
-  # `flatpak update` picks it up once published.
-  systemd.services.flatpak-nvidia-match = {
-    description = "Install Flatpak NVIDIA GL runtimes matching host driver";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "flatpak-add-flathub.service" "network-online.target" ];
-    wants = [ "network-online.target" ];
-    requires = [ "flatpak-add-flathub.service" ];
-    path = with pkgs; [ flatpak ];
-    script = ''
-      ver=$(tr '.' '-' < /sys/module/nvidia/version)
-      for ref in \
-        "org.freedesktop.Platform.GL.nvidia-$ver" \
-        "org.freedesktop.Platform.GL32.nvidia-$ver"; do
-        if flatpak info "$ref" >/dev/null 2>&1; then
-          echo "$ref already installed"
-        else
-          echo "installing $ref to match host driver"
-          flatpak install -y flathub "$ref" || echo "WARN: $ref not on Flathub yet, will retry next boot"
-        fi
-      done >>/var/log/flatpak-nvidia-match.log 2>&1 || true
-    '';
-    serviceConfig.Type = "oneshot";
-  };
+  # Flatpak is intentionally OFF (Sober was the only flatpak, it's gone).
+  # services.flatpak stays disabled; the Flathub + NVIDIA runtime oneshots
+  # were removed with it. Re-enable if a flatpak app ever comes back.
+  services.flatpak.enable = false;
 
   # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
   environment.sessionVariables = {
