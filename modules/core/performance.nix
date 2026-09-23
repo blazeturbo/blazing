@@ -21,6 +21,14 @@ in {
       "intel_pstate=active" # force HWP active mode (never passive)
       "intel_idle.max_cstate=1" # C1 only, skip deep C6 sleep states
       "processor.max_cstate=1" # same guard for acpi_idle fallback
+      # GPU max-performance at DRIVER level (no X display needed, unlike
+      # nvidia-settings): fixed clocks instead of Adaptive. No spaces —
+      # cmdline would split them. Costs hot idle (~40W at desktop), that
+      # is the point of performanceMode. Honest caveat: NVIDIA has been
+      # ignoring these knobs on some newer drivers + modesetting, so
+      # verify after reboot with `nvidia-settings -q GpuPowerMizerMode`
+      # (want 1). If still 0, next escalation is `nvidia-smi -lgc`.
+      "nvidia.NVreg_RegistryDwords=PowerMizerEnable=0x1;PerfLevelSrc=0x2222"
     ];
 
     # Belt + suspenders: pin EPP to performance on every CPU at boot
