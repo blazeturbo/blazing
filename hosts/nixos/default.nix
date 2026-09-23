@@ -189,25 +189,33 @@ in {
     serviceConfig.Type = "oneshot";
   };
 
-  # Flatpak NVIDIA GL/Vulkan runtimes, EXACTLY matching the host driver
-  # (595.99.02, see modules/core/nvidia.nix). Sandboxed apps (Sober)
+  # Flatpak NVIDIA GL/Vulkan runtimes, ALWAYS exactly matching the live
+  # host driver: reads /sys/module/nvidia/version at boot (dots->dashes)
+  # and installs that GL + GL32 runtime if missing. Sandboxed apps (Sober)
   # mount org.freedesktop.Platform.GL.nvidia-<host-version>; a mismatch
-  # breaks their Vulkan. Runs after the Flathub remote exists; skips
-  # anything already installed. If you bump the host driver, bump these
-  # two refs in lockstep.
-  systemd.services.flatpak-nvidia-595 = {
-    description = "Install Flatpak NVIDIA 595.99.02 GL runtimes if missing";
+  # breaks their Vulkan. Self-maintaining across driver updates — no
+  # manual version bumps. If Flathub hasn't published the brand-new
+  # runtime yet, install is retried via the log message on next boot /
+  # `flatpak update` picks it up once published.
+  systemd.services.flatpak-nvidia-match = {
+    description = "Install Flatpak NVIDIA GL runtimes matching host driver";
     wantedBy = [ "multi-user.target" ];
     after = [ "flatpak-add-flathub.service" "network-online.target" ];
     wants = [ "network-online.target" ];
     requires = [ "flatpak-add-flathub.service" ];
     path = with pkgs; [ flatpak ];
     script = ''
+      ver=$(tr '.' '-' < /sys/module/nvidia/version)
       for ref in \
-        org.freedesktop.Platform.GL.nvidia-595-99-02 \
-        org.freedesktop.Platform.GL32.nvidia-595-99-02; do
-        flatpak info "$ref" >/dev/null 2>&1 || flatpak install -y flathub "$ref"
-      done
+        "org.freedesktop.Platform.GL.nvidia-$ver" \
+        "org.freedesktop.Platform.GL32.nvidia-$ver"; do
+        if flatpak info "$ref" >/dev/null 2>&1; then
+          echo "$ref already installed"
+        else
+          echo "installing $ref to match host driver"
+          flatpak install -y flathub "$ref" || echo "WARN: $ref not on Flathub yet, will retry next boot"
+        fi
+      done >>/var/log/flatpak-nvidia-match.log 2>&1 || true
     '';
     serviceConfig.Type = "oneshot";
   };
