@@ -61,6 +61,12 @@
       "application/xhtml+xml" = [ "helium.desktop" ];
       "x-scheme-handler/http" = [ "helium.desktop" ];
       "x-scheme-handler/https" = [ "helium.desktop" ];
+      # Roblox Play links from the website: roblox:// and roblox-player://
+      # had NO default handler, so xdg-open dropped them on the floor and
+      # Sober never launched. The override below advertises the schemes;
+      # this makes it the default that actually gets called.
+      "x-scheme-handler/roblox" = [ "org.vinegarhq.Sober.desktop" ];
+      "x-scheme-handler/roblox-player" = [ "org.vinegarhq.Sober.desktop" ];
     };
   };
 
