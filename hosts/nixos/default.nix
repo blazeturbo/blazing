@@ -173,10 +173,21 @@ in {
     binfmt = true;
   };
 
-  # Flatpak is intentionally OFF (Sober was the only flatpak, it's gone).
-  # services.flatpak stays disabled; the Flathub + NVIDIA runtime oneshots
-  # were removed with it. Re-enable if a flatpak app ever comes back.
-  services.flatpak.enable = false;
+  # Flatpak is back on. Flathub remote declared once so a fresh machine
+  # gets it automatically. NVIDIA GL runtimes auto-install matching the
+  # host driver on `flatpak update`, no manual version babysitting.
+  services.flatpak.enable = true;
+  systemd.services.flatpak-add-flathub = {
+    description = "Add Flathub remote if missing";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [ flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    '';
+    serviceConfig.Type = "oneshot";
+  };
 
   # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
   environment.sessionVariables = {
