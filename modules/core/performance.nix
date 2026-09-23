@@ -22,7 +22,6 @@ in {
     # here — it applied (mem pegged at 9001, idle power 4x) but FPS didn't
     # move, so it got ripped back out. Just wasted heat. Not trying again.
     boot.kernelParams = [
-      "intel_pstate=active" # force HWP active mode (never passive)
       "intel_idle.max_cstate=1" # C1 only, skip deep C6 sleep states
       "processor.max_cstate=1" # same guard for acpi_idle fallback
     ];

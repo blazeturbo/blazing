@@ -116,11 +116,9 @@ in {
   # Enable zsh system-wide (required for it to be a valid login shell)
   programs.zsh.enable = true;
 
-  # GameMode: gaming tweaks while Sober runs (higher priority,
+  # GameMode: on-demand tweaks while a game runs (higher priority,
   # max NVIDIA PowerMizer). Governor stays `performance` always —
   # idle AND gaming, no powersave switching anywhere.
-  # Sober is forced through `gamemoderun` via the desktop override +
-  # `sober` wrapper in modules/home (so every launch path requests it).
   programs.gamemode = {
     enable = true;
     settings = {
