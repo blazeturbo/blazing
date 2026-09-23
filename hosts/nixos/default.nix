@@ -190,13 +190,13 @@ in {
   };
 
   # Flatpak NVIDIA GL/Vulkan runtimes, EXACTLY matching the host driver
-  # (610.57.04, see modules/core/nvidia.nix). Sandboxed apps (Sober)
+  # (595.99.02, see modules/core/nvidia.nix). Sandboxed apps (Sober)
   # mount org.freedesktop.Platform.GL.nvidia-<host-version>; a mismatch
   # breaks their Vulkan. Runs after the Flathub remote exists; skips
   # anything already installed. If you bump the host driver, bump these
   # two refs in lockstep.
-  systemd.services.flatpak-nvidia-610 = {
-    description = "Install Flatpak NVIDIA 610.57.04 GL runtimes if missing";
+  systemd.services.flatpak-nvidia-595 = {
+    description = "Install Flatpak NVIDIA 595.99.02 GL runtimes if missing";
     wantedBy = [ "multi-user.target" ];
     after = [ "flatpak-add-flathub.service" "network-online.target" ];
     wants = [ "network-online.target" ];
@@ -204,8 +204,8 @@ in {
     path = with pkgs; [ flatpak ];
     script = ''
       for ref in \
-        org.freedesktop.Platform.GL.nvidia-610-57-04 \
-        org.freedesktop.Platform.GL32.nvidia-610-57-04; do
+        org.freedesktop.Platform.GL.nvidia-595-99-02 \
+        org.freedesktop.Platform.GL32.nvidia-595-99-02; do
         flatpak info "$ref" >/dev/null 2>&1 || flatpak install -y flathub "$ref"
       done
     '';
