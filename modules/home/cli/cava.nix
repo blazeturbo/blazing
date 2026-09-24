@@ -1,6 +1,5 @@
-# Cava audio visualizer: gradient follows the Stylix palette (gray body
-# from the wallpaper, accent on top), readable on the dark terminal.
-# Shape: chunky centered bars with smooth physics. Colors untouched.
+# Cava audio visualizer: solid Stylix blue (base0D), no gradient.
+# Shape: thin bars, full height, smooth physics.
 { config, ... }:
 let
   c = config.lib.stylix.colors;
@@ -22,14 +21,7 @@ in {
         noise_reduction = 88; # buttery slow hill instead of spiky noise
       };
       color = {
-        foreground = "'#${c.base05}'"; # our stylix white, not pure white
-        gradient = 1;
-        gradient_color_1 = "'#${c.base02}'";
-        gradient_color_2 = "'#${c.base03}'";
-        gradient_color_3 = "'#${c.base04}'";
-        gradient_color_4 = "'#${c.base05}'";
-        gradient_color_5 = "'#${c.base06}'";
-        gradient_color_6 = "'#${c.base0D}'";
+        foreground = "'#${c.base0D}'"; # solid stylix blue, no gradient
       };
     };
   };
