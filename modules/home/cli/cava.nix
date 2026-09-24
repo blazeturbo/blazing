@@ -1,5 +1,6 @@
 # Cava audio visualizer: gradient follows the Stylix palette (gray body
 # from the wallpaper, accent on top), readable on the dark terminal.
+# Shape: chunky centered bars with smooth physics. Colors untouched.
 { config, ... }:
 let
   c = config.lib.stylix.colors;
@@ -8,9 +9,16 @@ in {
     enable = true;
     settings = {
       general = {
+        bars = 0; # auto-fill terminal width
+        bar_width = 3; # chunky bars instead of thin sticks
         bar_spacing = 1;
-        bar_width = 2;
-        frame_rate = 60;
+        center_align = 1; # center when there's leftover space
+        framerate = 60;
+      };
+      smoothing = {
+        monstercat = 1; # graceful falloff instead of jittery raw FFT
+        waves = 1; # gentle organic sway on top
+        noise_reduction = 60; # a touch livelier than the default 77
       };
       color = {
         gradient = 1;
