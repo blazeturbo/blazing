@@ -10,20 +10,20 @@ let
     magick ${vars.stylixImage} -background black -alpha remove -alpha off -blur 0x14 $out
   '';
 
-  # Backdrop follower: Noctalia owns the wallpaper at runtime (picked in its
-  # own picker, stored per-monitor in ~/.local/state/noctalia/settings.toml),
-  # so the overview backdrop can't be build-time-pinned. This polls that file
-  # and on every change: re-blurs + re-pushes the -backdrop awww layer
-  # (instant), AND syncs the pick into the repo (wallpapers/noctalia.jpg +
-  # variables.nix line, git-staged) so the next manual rebuild re-themes
+  # Backdrop follower: DMS owns the wallpaper at runtime (picked in its
+  # wallpaper browser, stored in ~/.local/state/DankMaterialShell/),
+  # so the overview backdrop can't be build-time-pinned. This polls that
+  # state and on every change: re-blurs + re-pushes the -backdrop awww
+  # layer (instant), AND syncs the pick into the repo (wallpapers/dank.jpg
+  # + variables.nix line, git-staged) so the next manual rebuild re-themes
   # all of Stylix onto it. Same blur recipe as overviewBlur above;
   # absolute tool paths, no new deps.
   backdropFollower = pkgs.writeShellScript "niri-backdrop-follower" ''
     set -uo pipefail
-    STATE="$HOME/.local/state/noctalia/settings.toml"
+    STATE="$HOME/.local/state/DankMaterialShell/session.json"
     OUT="''${XDG_CACHE_HOME:-$HOME/.cache}/niri-overview-blur.jpg"
     REPO="$HOME/.config/nixos"
-    WALL="$REPO/wallpapers/noctalia.jpg"
+    WALL="$REPO/wallpapers/dank.jpg"
     VARS="$REPO/variables.nix"
     MAGICK="${pkgs.imagemagick}/bin/magick"
     AWWW="${pkgs.awww}/bin/awww"
@@ -33,22 +33,18 @@ let
     GIT="${pkgs.git}/bin/git"
     GREP="${pkgs.gnugrep}/bin/grep"
     SED="${pkgs.gnused}/bin/sed"
+    HEAD="${pkgs.coreutils}/bin/head"
     current=""
     pick_path() {
       [ -f "$STATE" ] || return 0
-      # Per-monitor section first, [wallpaper.default] as fallback.
-      # (index() string matching on purpose: portable across awks,
-      # no regex escapes to mistreat.)
-      p=$(awk '
-        /^\[/ { in_s = (index($0, "[wallpaper.monitors.") == 1); next }
-        in_s && /^path *=/ { gsub(/^path *= *"/, ""); gsub(/".*$/, ""); print; exit }
-      ' "$STATE")
-      if [ -z "$p" ]; then
-        p=$(awk '
-          /^\[/ { in_s = ($0 == "[wallpaper.default]"); next }
-          in_s && /^path *=/ { gsub(/^path *= *"/, ""); gsub(/".*$/, ""); print; exit }
-        ' "$STATE")
-      fi
+      # DMS session.json holds the pick under a wallpaper-ish key
+      # ("wallpaperPath" in current DMS; first *allpaper* match wins).
+      # Tolerant on purpose: unknown future keys just log, never crash.
+      # VERIFY: after picking a wallpaper in DMS, check
+      # `journalctl --user -u niri-backdrop-follower` shows the new path.
+      # If it shows nothing/wrong path, inspect session.json and adjust
+      # the key pattern below.
+      p=$("$GREP" -o '"[^"]*[Ww]allpaper[^"]*"[[:space:]]*:[[:space:]]*"[^"]*"' "$STATE" 2>/dev/null | "$HEAD" -n 1 | "$SED" 's/^[^:]*:[[:space:]]*"//; s/"$//')
       printf '%s' "$p"
       return 0
     }
@@ -72,11 +68,11 @@ let
       [ -d "$REPO/wallpapers" ] || return 1
       "$MAGICK" "$1" -background black -alpha remove -alpha off -strip -quality 92 "JPG:$WALL.tmp" || return 1
       "$MV" "$WALL.tmp" "$WALL" || { "$RM" -f "$WALL.tmp"; return 1; }
-      (cd "$REPO" && "$GIT" add wallpapers/noctalia.jpg) || return 1
+      (cd "$REPO" && "$GIT" add wallpapers/dank.jpg) || return 1
       # Active line only (^[space]*stylixImage): commented alternatives stay intact.
-      if ! "$GREP" -q '^[[:space:]]*stylixImage = ./wallpapers/noctalia.jpg;' "$VARS" 2>/dev/null; then
-        "$SED" -i 's|^\([[:space:]]*\)stylixImage = .*|\1stylixImage = ./wallpapers/noctalia.jpg;|' "$VARS" || return 1
-        log "variables.nix now points at wallpapers/noctalia.jpg"
+      if ! "$GREP" -q '^[[:space:]]*stylixImage = ./wallpapers/dank.jpg;' "$VARS" 2>/dev/null; then
+        "$SED" -i 's|^\([[:space:]]*\)stylixImage = .*|\1stylixImage = ./wallpapers/dank.jpg;|' "$VARS" || return 1
+        log "variables.nix now points at wallpapers/dank.jpg"
       fi
       return 0
     }
@@ -99,7 +95,7 @@ let
 in {
   systemd.user.services.niri-backdrop-follower = {
     Unit = {
-      Description = "Keep Niri overview backdrop on Noctalia wallpaper";
+      Description = "Keep Niri overview backdrop on DMS wallpaper";
       PartOf = [ "graphical-session.target" ];
       After = [ "graphical-session.target" ];
     };
@@ -123,7 +119,6 @@ in {
       spawn-at-startup "${pkgs.swaybg}/bin/swaybg" "-i" "${vars.stylixImage}" "-m" "fill"
       spawn-at-startup "${pkgs.awww}/bin/awww-daemon" "--namespace" "-backdrop"
       spawn-at-startup "sh" "-c" "for i in 1 2 3 4 5 6; do ${pkgs.awww}/bin/awww img --namespace=-backdrop ${overviewBlur} && break; sleep 1; done"
-      spawn-at-startup "sh" "-c" "sleep 0.5 && systemctl --user restart noctalia || ${pkgs.noctalia}/bin/noctalia"
       spawn-at-startup "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
       // GPU PowerMizer is on-demand via GameMode (nv_powermizer_mode=1
       // in hosts/nixos/default.nix), NOT forced at login: idle stays

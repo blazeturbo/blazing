@@ -11,7 +11,7 @@
  # stylixImage = ./wallpapers/Rainnight.jpg;
   # stylixImage = ./wallpapers/AnimeGirlNightSky.jpg;
   # stylixImage = ./wallpapers/Anime-Purple-eyes.png;
-   stylixImage = ./wallpapers/noctalia.jpg;
+   stylixImage = ./wallpapers/dank.jpg;
   # stylixImage = ./wallpapers/beautifulmountainscape.jpg;
   # stylixImage = ./wallpapers/zaney-wallpaper.jpg;
   # stylixImage = ./wallpapers/nix-wallpaper-stripes-logo.png;
@@ -22,7 +22,7 @@
 
   # Default Terminal & App Launcher
   terminal = "kitty";
-  launcher = "noctalia";
+  launcher = "dank";
 
   # Login manager: "ly" (TUI, matrix), "sddm" (stock theme),
   # "pixie" (SDDM + pixie-sddm Material theme), or "frosted"

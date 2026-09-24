@@ -36,12 +36,6 @@ window-rule {
     }
 }
 
-// Rules for Noctalia
-window-rule {
-    match app-id=r#"dev\.noctalia\.Noctalia"#
-    open-floating true
-}
-
 // Rules for specific applications
 window-rule {
     match app-id=r#"zen$"# title="^Picture-in-Picture$"

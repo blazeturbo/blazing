@@ -1,4 +1,4 @@
-My NixOS setup. Niri as the window manager, Noctalia as the bar,
+My NixOS setup. Niri as the window manager, Dank Material Shell as the bar,
 Stylix pulling the whole color scheme out of the wallpaper, one flake
 to rebuild all of it.
 
@@ -50,7 +50,7 @@ Bits that live outside the repo: Helium AppImage goes in
 flake.nix / variables.nix   entrypoint, your settings
 hosts/nixos/                system: boot, kernel, nvidia, locale, packages
 modules/core/               niri, stylix, scheduler, network, rainbow CLI
-modules/home/               kitty, zsh, fastfetch, cava, noctalia, niri configs
+modules/home/               kitty, zsh, fastfetch, cava, dms, niri configs
 wallpapers/                 Stylix builds the palette from stylixImage
 install.sh                  fresh-machine installer
 ```
