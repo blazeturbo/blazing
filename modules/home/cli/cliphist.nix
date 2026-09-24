@@ -1,6 +1,6 @@
 # Proper clipboard manager: cliphist keeps a persistent history of
 # everything you copy (text + images), fed by wl-paste --watch.
-# UI is DMS clipboard (Mod+Shift+V); `cliphist list`
+# UI is Noctalia's clipboard panel (Mod+Shift+V); `cliphist list`
 # shows history in the terminal, Enter on an entry copies it back.
 { pkgs, ... }: {
   home.packages = [ pkgs.cliphist ];

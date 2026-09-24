@@ -1,5 +1,5 @@
 {
-  description = "NixOS Configuration with Niri, Stylix, and Dank Material Shell";
+  description = "NixOS Configuration with Niri, Stylix, and Noctalia";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";

@@ -1,0 +1,49 @@
+{
+  pkgs,
+  lib,
+  ...
+}: let
+  noctaliaPkg = pkgs.noctalia;
+  noctaliaServiceEntrypoint = pkgs.writeShellScript "noctalia-service-entrypoint" ''
+    set -euo pipefail
+
+    ${pkgs.psmisc}/bin/killall -q waybar 2>/dev/null || true
+    ${pkgs.procps}/bin/pkill -x waybar 2>/dev/null || true
+    ${pkgs.procps}/bin/pkill -x noctalia 2>/dev/null || true
+    ${pkgs.procps}/bin/pkill -f noctalia-shell 2>/dev/null || true
+    ${pkgs.coreutils}/bin/sleep 0.4
+
+    exec ${noctaliaPkg}/bin/noctalia
+  '';
+in {
+  home.packages = [
+    noctaliaPkg
+    pkgs.matugen
+  ];
+
+  systemd.user.services.noctalia = {
+    Unit = {
+      Description = "Noctalia panel service";
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session.target"];
+    };
+    Install = {
+      WantedBy = ["graphical-session.target"];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${noctaliaServiceEntrypoint}";
+      Restart = "on-failure";
+      RestartSec = "1";
+    };
+  };
+
+  home.activation.ensureNoctaliaConfigDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    set -eu
+    DEST="$HOME/.config/noctalia"
+
+    if [ ! -d "$DEST" ]; then
+      $DRY_RUN_CMD mkdir -p "$DEST"
+    fi
+  '';
+}

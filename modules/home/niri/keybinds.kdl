@@ -10,12 +10,11 @@
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    // DMS Integration (same keys as the Noctalia era)
-    Mod+Shift+D      hotkey-overlay-title="DMS Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
-    Mod+N            hotkey-overlay-title="DMS Notifications" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
-    Mod+Shift+V      hotkey-overlay-title="DMS Clipboard" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
-    Mod+Shift+Comma  hotkey-overlay-title="DMS Settings" { spawn "dms" "ipc" "call" "settings" "toggle"; }
-    Mod+Y            hotkey-overlay-title="DMS Wallpapers" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
+    // Noctalia Integration
+    Mod+Shift+D      hotkey-overlay-title="Noctalia Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+N            hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia" "msg" "panel-toggle" "control-center" "notifications"; }
+    Mod+Shift+V      hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    Mod+Shift+Comma  hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "msg" "settings-toggle"; }
 
     // Application Launchers
     Mod+Q            hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
@@ -23,15 +22,15 @@ binds {
     Mod+E            hotkey-overlay-title="Open File Manager" { spawn "sh" "-c" "xdg-open \"$HOME\""; }
     Mod+B            hotkey-overlay-title="Open Browser: helium" { spawn "/home/astrid/Applications/helium-0.17.1.1-x86_64.AppImage" "--ozone-platform-hint=auto"; }
 
-    // Screenshots (DMS screenshotter, niri backend)
-    Mod+Shift+S      hotkey-overlay-title="Screenshot region" { spawn "dms" "ipc" "call" "niri" "screenshot"; }
-    Print           { spawn "dms" "ipc" "call" "niri" "screenshot"; }
-    Ctrl+Print      { spawn "dms" "ipc" "call" "niri" "screenshotScreen"; }
-    Alt+Print       { spawn "dms" "ipc" "call" "niri" "screenshotWindow"; }
+    // Screenshots (Noctalia screenshotter)
+    Mod+Shift+S      hotkey-overlay-title="Screenshot region" { spawn "noctalia" "msg" "screenshot-region"; }
+    Print           { screenshot; }
+    Ctrl+Print      { screenshot-screen; }
+    Alt+Print       { screenshot-window; }
 
-    Mod+P           { spawn "dms" "ipc" "call" "niri" "screenshot"; }
-    Mod+Shift+P     { spawn "dms" "ipc" "call" "niri" "screenshotScreen"; }
-    Mod+Alt+P       { spawn "dms" "ipc" "call" "niri" "screenshotWindow"; }
+    Mod+P           { screenshot; }
+    Mod+Shift+P     { screenshot-screen; }
+    Mod+Alt+P       { screenshot-window; }
 
     // Misc actions
     Mod+Shift+E     { quit; }

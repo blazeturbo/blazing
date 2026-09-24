@@ -8,7 +8,7 @@
     ./yazi
     ./starship.nix
     ./stylix.nix
-    ./dms-theme.nix
+    ./noctalia.nix
     ./niri
     ./kitty.nix
     ./zsh.nix
@@ -64,6 +64,7 @@
   xdg.dataFile = {
     "applications/btop.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/kitty.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
+    "applications/dev.noctalia.Noctalia.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/qt5ct.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/qt6ct.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
     "applications/kvantummanager.desktop".text = "[Desktop Entry]\nNoDisplay=true\n";
