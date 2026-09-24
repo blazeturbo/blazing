@@ -8,6 +8,7 @@
     ./yazi
     ./starship.nix
     ./stylix.nix
+    ./dms-theme.nix
     ./niri
     ./kitty.nix
     ./zsh.nix

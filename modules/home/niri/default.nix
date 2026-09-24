@@ -36,15 +36,22 @@ let
     HEAD="${pkgs.coreutils}/bin/head"
     current=""
     pick_path() {
+      # 1. Ask DMS directly (exact, no parsing). Guarded: DMS stopped or
+      # IPC disagreeing just falls through to the file below.
+      if [ -x /run/current-system/sw/bin/dms ]; then
+        p=$(/run/current-system/sw/bin/dms ipc call wallpaper get 2>/dev/null | "$HEAD" -n 1 | "$SED" -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^"//' -e 's/"$//')
+        case "$p" in
+          /*) printf '%s' "$p"; return 0 ;;
+        esac
+      fi
+      # 2. session.json: wallpaperPath* keys first (global + light/dark).
       [ -f "$STATE" ] || return 0
-      # DMS session.json holds the pick under a wallpaper-ish key
-      # ("wallpaperPath" in current DMS; first *allpaper* match wins).
-      # Tolerant on purpose: unknown future keys just log, never crash.
-      # VERIFY: after picking a wallpaper in DMS, check
-      # `journalctl --user -u niri-backdrop-follower` shows the new path.
-      # If it shows nothing/wrong path, inspect session.json and adjust
-      # the key pattern below.
-      p=$("$GREP" -o '"[^"]*[Ww]allpaper[^"]*"[[:space:]]*:[[:space:]]*"[^"]*"' "$STATE" 2>/dev/null | "$HEAD" -n 1 | "$SED" 's/^[^:]*:[[:space:]]*"//; s/"$//')
+      p=$("$GREP" -o '"[^"]*[Ww]allpaper[Pp]ath[^"]*"[[:space:]]*:[[:space:]]*"[^"]*"' "$STATE" 2>/dev/null | "$HEAD" -n 1 | "$SED" 's/^[^:]*:[[:space:]]*"//; s/"$//')
+      # 3. Per-monitor picks ("HDMI-A-1": "/pic.png" under
+      # monitorWallpapers) carry no wallpaper key — match any image path.
+      if [ -z "$p" ]; then
+        p=$("$GREP" -o '"[^"]*"[[:space:]]*:[[:space:]]*"/[^"]*\.\(jpg\|jpeg\|png\|webp\|gif\|bmp\)"' "$STATE" 2>/dev/null | "$HEAD" -n 1 | "$SED" 's/^[^:]*:[[:space:]]*"//; s/"$//')
+      fi
       printf '%s' "$p"
       return 0
     }
