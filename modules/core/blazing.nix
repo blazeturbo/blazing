@@ -15,9 +15,11 @@ let
     pkgs.buildLinux (args
       // {
         # Release string becomes <version>-blazing:
-        # - the patch below wipes Zen's "EXTRAVERSION = -zen2" from the
-        #   top Makefile (if that line ever disappears upstream, patching
-        #   fails loudly in seconds — delete both spots then),
+        # - the patch below wipes Zen's "EXTRAVERSION = -zenN" from the
+        #   top Makefile (the N changes per zen release — 7.2.6 was zen2,
+        #   7.2.7 is zen1 — so when the kernel updates, patching fails
+        #   loudly in seconds: check the new Makefile line 5 and update
+        #   the patch to match),
         # - LOCALVERSION appends our suffix via Kconfig,
         # - modDirVersion must equal the real release, hence this form.
         # It tracks args.version, so kernel updates can't desync it.
