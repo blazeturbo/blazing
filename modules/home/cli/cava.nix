@@ -10,8 +10,9 @@ in {
     settings = {
       general = {
         bars = 0; # auto-fill: fixed counts crash narrow windows
-        bar_width = 5; # wide chunky bars, tiny gaps
+        bar_width = 2;
         bar_spacing = 1;
+        max_height = 100; # use the full terminal height
         center_align = 1; # center when there's leftover space
         framerate = 60;
       };
@@ -21,6 +22,7 @@ in {
         noise_reduction = 88; # buttery slow hill instead of spiky noise
       };
       color = {
+        foreground = "'#${c.base05}'"; # our stylix white, not pure white
         gradient = 1;
         gradient_color_1 = "'#${c.base02}'";
         gradient_color_2 = "'#${c.base03}'";
