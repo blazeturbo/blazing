@@ -9,7 +9,7 @@ in {
     enable = true;
     settings = {
       general = {
-        bars = 30; # fixed count = stable hill shape at any window size
+        bars = 0; # auto-fill: fixed counts crash narrow windows
         bar_width = 5; # wide chunky bars, tiny gaps
         bar_spacing = 1;
         center_align = 1; # center when there's leftover space
