@@ -9,16 +9,16 @@ in {
     enable = true;
     settings = {
       general = {
-        bars = 0; # auto-fill terminal width
-        bar_width = 3; # chunky bars instead of thin sticks
+        bars = 30; # fixed count = stable hill shape at any window size
+        bar_width = 5; # wide chunky bars, tiny gaps
         bar_spacing = 1;
         center_align = 1; # center when there's leftover space
         framerate = 60;
       };
       smoothing = {
         monstercat = 1; # graceful falloff instead of jittery raw FFT
-        waves = 1; # gentle organic sway on top
-        noise_reduction = 60; # a touch livelier than the default 77
+        waves = 0; # off — waves make the hill seasick, we want calm
+        noise_reduction = 88; # buttery slow hill instead of spiky noise
       };
       color = {
         gradient = 1;
