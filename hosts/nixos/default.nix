@@ -172,9 +172,12 @@ in {
     binfmt = true;
   };
 
-  # Flatpak is back on. Flathub remote declared once so a fresh machine
-  # gets it automatically. NVIDIA GL runtimes auto-install matching the
-  # host driver on `flatpak update`, no manual version babysitting.
+  # Flatpak, manual-only (no auto-update, no timers).
+  # NixOS owns the Nvidia driver version; Flatpak only installs the
+  # matching GL runtime when YOU run `flatpak update` or
+  # `blaze flatpak-sync`. Nothing here auto-updates or prunes.
+  # Flathub is added once via oneshot (this nixpkgs has no
+  # `services.flatpak.remotes` option yet).
   services.flatpak.enable = true;
   systemd.services.flatpak-add-flathub = {
     description = "Add Flathub remote if missing";

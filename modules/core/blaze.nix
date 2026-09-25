@@ -60,6 +60,7 @@ let
       echo -e "  ''${COLOR_CYAN}edit''${NC}              Open the flake in \$EDITOR (or a path inside it)"
       echo -e "  ''${COLOR_CYAN}list-gens''${NC}         List system and user generations"
       echo -e "  ''${COLOR_CYAN}cleanup''${NC}           Garbage collect and remove old generations"
+      echo -e "  ''${COLOR_CYAN}flatpak-sync''${NC}      Show host vs Flatpak Nvidia, then manual update/prune"
       echo -e "  ''${COLOR_CYAN}help''${NC}              Show this help message"
       echo
       echo -e "''${BOLD}''${COLOR_BLUE}Options:''${NC}"
@@ -229,6 +230,21 @@ let
           nix-collect-garbage -d
         fi
         echo -e "''${COLOR_GREEN}✔ Cleanup finished!''${NC}"
+        ;;
+
+      flatpak-sync)
+        print_banner
+        echo -e "''${COLOR_BLUE}==> Host Nvidia driver (source of truth)...''${NC}"
+        nvidia-smi --query-gpu=driver_version --format=csv,noheader || echo "nvidia-smi not available"
+        echo
+        echo -e "''${COLOR_BLUE}==> Flatpak Nvidia runtimes installed...''${NC}"
+        flatpak list --runtime | grep -i nvidia || echo "No Nvidia runtimes installed"
+        echo
+        echo -e "''${COLOR_GREEN}==> Running flatpak update (you approve everything, nothing automatic)...''${NC}"
+        flatpak update "$@"
+        echo -e "''${COLOR_GREEN}==> Pruning unused runtimes (you approve)...''${NC}"
+        flatpak uninstall --unused "$@"
+        echo -e "''${COLOR_GREEN}✔ Flatpak synced to host driver!''${NC}"
         ;;
 
       help|--help|-h)
