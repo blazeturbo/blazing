@@ -48,9 +48,9 @@ in {
 
       [icon]
       globs = []
-      dirs = {}
-      files = {}
-      exts = {}
+      dirs = []
+      files = []
+      exts = []
       conds = [
         { if = "dir", text = "", fg = "${hex c.base0D}" },
         { if = "!dir", text = "", fg = "${hex c.base05}" },
