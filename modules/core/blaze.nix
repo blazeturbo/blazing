@@ -28,10 +28,16 @@ let
     FLAKE_DIR="$HOME/.config/nixos"
     HOSTNAME="nixos"
 
-    # No ASCII art: backslashes and backticks mangle unpredictably
-    # through the nix->bash layers. Plain themed wordmark, unbreakable.
+    # Banner: figlet "slant" BLAZE, generated with a temp nix-shell
+    # figlet (nothing permanent). printf, not echo -e, so backslashes
+    # could never mangle it — and this charset has none anyway: no
+    # backslashes, no backticks, no $. Blue = Stylix main color.
     print_banner() {
-      echo -e "''${BOLD}''${COLOR_TITLE}blaze''${NC}"
+      printf '%s\n' "${c_base0D}    ____  __    ___ _____   ______${c_reset}"
+      printf '%s\n' "${c_base0D}   / __ )/ /   /   /__  /  / ____/${c_reset}"
+      printf '%s\n' "${c_base0D}  / __  / /   / /| | / /  / __/${c_reset}"
+      printf '%s\n' "${c_base0D} / /_/ / /___/ ___ |/ /__/ /___${c_reset}"
+      printf '%s\n' "${c_base0D}/_____/_____/_/  |_/____/_____/${c_reset}"
       echo
     }
 
