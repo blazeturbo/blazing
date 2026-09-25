@@ -60,11 +60,11 @@ in {
     # Palette keys keep their names so every reference below just works —
     # only the hex values follow Stylix.
     # Gutter kill: yazi's Entity renderer hardcodes a leading padding
-    # space plus an icon cell + trailing space per row. With icons gone
-    # those are dead columns, so drop both children and names start at
-    # column zero (Entity:children_remove(1) = padding, (2) = icon).
+    # space plus an icon cell + trailing space per row. Icons are gone,
+    # so drop ONLY the icon child (id 2) and keep the padding child
+    # (id 1): exactly one leading space, names breathe but stay aligned.
+    # (Child ids are stable, removal doesn't renumber the rest.)
     "yazi/init.lua".text = ''
-      Entity:children_remove(1)
       Entity:children_remove(2)
 
       local stylix_palette = {

@@ -28,11 +28,10 @@ let
     FLAKE_DIR="$HOME/.config/nixos"
     HOSTNAME="nixos"
 
+    # No ASCII art: backslashes and backticks mangle unpredictably
+    # through the nix->bash layers. Plain themed wordmark, unbreakable.
     print_banner() {
-      echo -e "${c_base0E}  ____  _                 ${c_reset}"
-      echo -e "${c_base0D} | __ )| |__ _ _______  ___ ${c_reset}"
-      echo -e "${c_base0C} |  _ \\| / _\` |_  / -_) ${c_reset}"
-      echo -e "${c_base0B} |___/|_\\__,_/___\\___| ${c_reset}"
+      echo -e "''${BOLD}''${COLOR_TITLE}blaze''${NC}"
       echo
     }
 
@@ -237,15 +236,9 @@ let
     esac
   '';
 
-  # Muscle-memory shim: rainbow is dead, long live blaze.
-  rainbowShim = pkgs.writeShellScriptBin "rainbow" ''
-    echo "rainbow was renamed to blaze — running it for you this time." >&2
-    exec blaze "$@"
-  '';
 in {
   environment.systemPackages = [
     blazeScript
-    rainbowShim
     pkgs.nh
   ];
 
