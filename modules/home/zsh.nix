@@ -30,9 +30,11 @@
       sv = "sudo nvim";
       v = "nvim";
       c = "clear";
-      rr = "rainbow rebuild";
-      rc = "rainbow check";
-      ru = "rainbow update";
+      rr = "blaze rebuild";
+      rb = "blaze rollback";
+      rc = "blaze check";
+      ru = "blaze update";
+      rs = "blaze status";
       ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
       cat = "bat";
       man = "batman";

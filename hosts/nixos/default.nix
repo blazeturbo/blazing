@@ -13,7 +13,7 @@ in {
     ../../modules/core/sddm.nix
     ../../modules/core/stylix.nix
     ../../modules/core/fonts
-    ../../modules/core/rainbow.nix
+    ../../modules/core/blaze.nix
   ];
 
   # Allow unfree packages (required for NVIDIA drivers, etc.)

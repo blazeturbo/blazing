@@ -27,8 +27,10 @@ but NVIDIA + UEFI is what actually works today.
 
 ## Day to day
 
-`rainbow rebuild` to switch, `rainbow test` to try without committing,
-`rainbow update` for inputs, `rainbow cleanup` to collect garbage.
+`blaze rebuild` to switch, `blaze test` to try without committing,
+`blaze update` for inputs, `blaze cleanup` to collect garbage.
+`blaze rollback` when it breaks, `blaze status` and `blaze doctor`
+when something feels off.
 
 Keybinds (Mod = Super): Q terminal, B browser, D column widths,
 C close, Shift+S screenshot, Shift+D launcher, N notifications,
@@ -43,7 +45,7 @@ Bits that live outside the repo: Helium AppImage goes in
 ```text
 flake.nix / variables.nix   entrypoint, your settings
 hosts/nixos/                system: boot, kernel, nvidia, locale, packages
-modules/core/               niri, stylix, scheduler, network, rainbow CLI
+modules/core/               niri, stylix, scheduler, network, blaze CLI
 modules/home/               kitty, zsh, fastfetch, cava, noctalia, niri configs
 wallpapers/                 Stylix builds the palette from stylixImage
 install.sh                  fresh-machine installer

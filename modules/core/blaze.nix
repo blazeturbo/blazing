@@ -12,7 +12,7 @@ let
   c_base0A = toAnsi c.base0A-rgb-r c.base0A-rgb-g c.base0A-rgb-b; # yellow / gold
   c_base08 = toAnsi c.base08-rgb-r c.base08-rgb-g c.base08-rgb-b; # red
 
-  rainbowScript = pkgs.writeShellScriptBin "rainbow" ''
+  blazeScript = pkgs.writeShellScriptBin "blaze" ''
     set -euo pipefail
 
     # Colors dynamically derived from Stylix wallpaper theme!
@@ -29,23 +29,29 @@ let
     HOSTNAME="nixos"
 
     print_banner() {
-      echo -e "${c_base0E}  ___       _       _                 ${c_reset}"
-      echo -e "${c_base0D} | _ \\ __ _(_)_ _  | |__  _____ __ __ ${c_reset}"
-      echo -e "${c_base0C} |   // _  | | ' \\ | '_ \\/ _ \\ V  V / ${c_reset}"
-      echo -e "${c_base0B} |_|_\\\\__,_|_|_||_||_.__/\\___/\\_/\\_/  ${c_reset}"
+      echo -e "${c_base0E}  ____  _                 ${c_reset}"
+      echo -e "${c_base0D} | __ )| |__ _ _______  ___ ${c_reset}"
+      echo -e "${c_base0C} |  _ \\| / _\` |_  / -_) ${c_reset}"
+      echo -e "${c_base0B} |___/|_\\__,_/___\\___| ${c_reset}"
       echo
     }
 
     print_help() {
       print_banner
-      echo -e "''${BOLD}Usage:''${NC} rainbow <command> [options]"
+      echo -e "''${BOLD}Usage:''${NC} blaze <command> [options]"
       echo
       echo -e "''${BOLD}Commands:''${NC}"
       echo -e "  ''${COLOR_CYAN}rebuild''${NC}           Rebuild and switch to the new system generation"
       echo -e "  ''${COLOR_CYAN}rebuild-boot''${NC}      Rebuild and set as default for next boot"
       echo -e "  ''${COLOR_CYAN}test''${NC}              Build and activate temporarily without boot entry"
       echo -e "  ''${COLOR_CYAN}update''${NC}            Update flake lock inputs and rebuild system"
+      echo -e "  ''${COLOR_CYAN}sync''${NC}              Pull remote changes, then rebuild and switch"
+      echo -e "  ''${COLOR_CYAN}rollback''${NC}          Roll back to the previous system generation"
       echo -e "  ''${COLOR_CYAN}check''${NC}             Check flake evaluation and dry-run build"
+      echo -e "  ''${COLOR_CYAN}diff''${NC}              Show what changed vs the booted generation"
+      echo -e "  ''${COLOR_CYAN}status''${NC}            Git status, recent commits, current generation"
+      echo -e "  ''${COLOR_CYAN}doctor''${NC}            Sanity checks: git state, disk, failed units"
+      echo -e "  ''${COLOR_CYAN}edit''${NC}              Open the flake in \$EDITOR (or a path inside it)"
       echo -e "  ''${COLOR_CYAN}list-gens''${NC}         List system and user generations"
       echo -e "  ''${COLOR_CYAN}cleanup''${NC}           Garbage collect and remove old generations"
       echo -e "  ''${COLOR_CYAN}help''${NC}              Show this help message"
@@ -123,12 +129,79 @@ let
         echo -e "''${COLOR_GREEN}✔ System updated successfully!''${NC}"
         ;;
 
+      sync)
+        print_banner
+        stage_git
+        echo -e "''${COLOR_BLUE}==> Pulling remote changes...''${NC}"
+        git -C "$FLAKE_DIR" pull --rebase origin master
+        echo -e "''${COLOR_GREEN}==> Rebuilding system...''${NC}"
+        if command -v nh >/dev/null 2>&1; then
+          nh os switch "$FLAKE_DIR" "$@"
+        else
+          sudo nixos-rebuild switch --flake "$FLAKE_DIR#$HOSTNAME" "$@"
+        fi
+        echo -e "''${COLOR_GREEN}✔ Synced and rebuilt!''${NC}"
+        ;;
+
+      rollback)
+        print_banner
+        echo -e "''${COLOR_YELLOW}==> Rolling back to the previous generation...''${NC}"
+        sudo nixos-rebuild switch --rollback
+        echo -e "''${COLOR_GREEN}✔ Rolled back! Reboot if the kernel changed.''${NC}"
+        ;;
+
       check|dry)
         print_banner
         stage_git
         echo -e "''${COLOR_CYAN}==> Evaluating system configuration...''${NC}"
         nix --extra-experimental-features "nix-command flakes" eval "$FLAKE_DIR#nixosConfigurations.$HOSTNAME.config.system.build.toplevel.drvPath"
         echo -e "''${COLOR_GREEN}✔ Flake evaluation succeeded!''${NC}"
+        ;;
+
+      diff)
+        print_banner
+        echo -e "''${COLOR_CYAN}==> Booted generation vs current system...''${NC}"
+        nix store diff-closures /run/booted-system /run/current-system || true
+        ;;
+
+      status|st)
+        print_banner
+        echo -e "''${BOLD}=== Git status ===''${NC}"
+        git -C "$FLAKE_DIR" status --short || true
+        echo
+        echo -e "''${BOLD}=== Recent commits ===''${NC}"
+        git -C "$FLAKE_DIR" log --oneline -8 || true
+        echo
+        echo -e "''${BOLD}=== Current generation ===''${NC}"
+        nixos-rebuild list-generations 2>/dev/null | head -3 || true
+        ;;
+
+      doctor)
+        print_banner
+        echo -e "''${COLOR_CYAN}==> Doctor is in...''${NC}"
+        if [ -n "$(git -C "$FLAKE_DIR" status --porcelain 2>/dev/null)" ]; then
+          echo -e "''${COLOR_YELLOW}! Uncommitted changes in the flake''${NC}"
+        else
+          echo -e "''${COLOR_GREEN}✔ Flake tree clean''${NC}"
+        fi
+        echo -e "''${COLOR_BLUE}-- Disk --''${NC}"
+        df -h /nix/store 2>/dev/null | tail -1 || df -h / | tail -1
+        echo -e "''${COLOR_BLUE}-- Failed units --''${NC}"
+        if [ -z "$(systemctl --failed --no-legend 2>/dev/null)" ] && [ -z "$(systemctl --user --failed --no-legend 2>/dev/null)" ]; then
+          echo -e "''${COLOR_GREEN}✔ No failed units''${NC}"
+        else
+          systemctl --failed --no-legend 2>/dev/null || true
+          systemctl --user --failed --no-legend 2>/dev/null || true
+        fi
+        ;;
+
+      edit)
+        TARGET="''${1:-$FLAKE_DIR}"
+        case "$TARGET" in
+          /*) ;;
+          *) TARGET="$FLAKE_DIR/$TARGET" ;;
+        esac
+        "''${EDITOR:-nano}" "$TARGET"
         ;;
 
       list-gens)
@@ -163,9 +236,16 @@ let
         ;;
     esac
   '';
+
+  # Muscle-memory shim: rainbow is dead, long live blaze.
+  rainbowShim = pkgs.writeShellScriptBin "rainbow" ''
+    echo "rainbow was renamed to blaze — running it for you this time." >&2
+    exec blaze "$@"
+  '';
 in {
   environment.systemPackages = [
-    rainbowScript
+    blazeScript
+    rainbowShim
     pkgs.nh
   ];
 

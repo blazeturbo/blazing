@@ -21,7 +21,7 @@
     };
     # opencode CLI pinned to a known-good commit. Main nixpkgs' opencode
     # is broken, so this stays pinned on purpose — do NOT make it follow
-    # nixpkgs or `rainbow update` will break it again.
+    # nixpkgs or `blaze update` will break it again.
     opencode-pin = {
       url = "github:NixOS/nixpkgs/590d72952b052366ecf4060c8bf711d7f2b0d249";
     };

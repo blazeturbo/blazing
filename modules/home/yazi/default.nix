@@ -47,10 +47,6 @@ in {
       dirs = []
       files = []
       exts = []
-      conds = [
-        { if = "dir", text = "" },
-        { if = "!dir", text = "" },
-      ]
 
       [filetype]
       rules = [
@@ -63,7 +59,14 @@ in {
     # the left of the status bar, position + permissions on the right.
     # Palette keys keep their names so every reference below just works —
     # only the hex values follow Stylix.
+    # Gutter kill: yazi's Entity renderer hardcodes a leading padding
+    # space plus an icon cell + trailing space per row. With icons gone
+    # those are dead columns, so drop both children and names start at
+    # column zero (Entity:children_remove(1) = padding, (2) = icon).
     "yazi/init.lua".text = ''
+      Entity:children_remove(1)
+      Entity:children_remove(2)
+
       local stylix_palette = {
         rosewater = "${hex c.base05}",
         flamingo = "${hex c.base05}",
