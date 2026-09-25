@@ -29,22 +29,21 @@ let
     HOSTNAME="nixos"
 
     # Banner: figlet "slant" BLAZE, generated with a temp nix-shell
-    # figlet (nothing permanent). printf, not echo -e, so backslashes
-    # could never mangle it — and this charset has none anyway: no
-    # backslashes, no backticks, no $. Blue = Stylix main color.
+    # figlet (nothing permanent). echo -e on purpose: the \033 color
+    # codes NEED interpreting, and the art charset is clean (no
+    # backslashes, no backticks, no $), so there's nothing to mangle.
+    # (printf was tried: it prints \033 literally. Never again.)
     print_banner() {
-      printf '%s\n' "${c_base0D}    ____  __    ___ _____   ______${c_reset}"
-      printf '%s\n' "${c_base0D}   / __ )/ /   /   /__  /  / ____/${c_reset}"
-      printf '%s\n' "${c_base0D}  / __  / /   / /| | / /  / __/${c_reset}"
-      printf '%s\n' "${c_base0D} / /_/ / /___/ ___ |/ /__/ /___${c_reset}"
-      printf '%s\n' "${c_base0D}/_____/_____/_/  |_/____/_____/${c_reset}"
+      echo -e "${c_base0D}    ____  __    ___ _____   ______${c_reset}"
+      echo -e "${c_base0D}   / __ )/ /   /   /__  /  / ____/${c_reset}"
+      echo -e "${c_base0D}  / __  / /   / /| | / /  / __/${c_reset}"
+      echo -e "${c_base0D} / /_/ / /___/ ___ |/ /__/ /___${c_reset}"
+      echo -e "${c_base0D}/_____/_____/_/  |_/____/_____/${c_reset}"
       echo
     }
 
     print_help() {
       print_banner
-      echo -e "''${BOLD}Usage:''${NC} blaze <command> [options]"
-      echo
       echo -e "''${BOLD}Commands:''${NC}"
       echo -e "  ''${COLOR_CYAN}rebuild''${NC}           Rebuild and switch to the new system generation"
       echo -e "  ''${COLOR_CYAN}rebuild-boot''${NC}      Rebuild and set as default for next boot"
