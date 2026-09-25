@@ -5,7 +5,7 @@
 { stdenvNoCC }:
 stdenvNoCC.mkDerivation {
   pname = "astrid-jetbrains-mono-nerd";
-  version = "3.5.0";
+  version = "3.5.1";
 
   src = ./.;
 

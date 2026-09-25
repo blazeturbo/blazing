@@ -12,6 +12,7 @@ in {
     ../../modules/core/performance.nix
     ../../modules/core/sddm.nix
     ../../modules/core/stylix.nix
+    ../../modules/core/fonts
     ../../modules/core/rainbow.nix
   ];
 
