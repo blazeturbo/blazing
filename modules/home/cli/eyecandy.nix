@@ -38,12 +38,15 @@ let
   cmatrixColor = builtins.elemAt cmatrixNames nearestIdx;
   # Stock cmatrix hardcodes WHITE stream heads (COLOR_WHITE in cmatrix.c),
   # so no flag combo can ever be single-color. Reword those two sites to
-  # the matrix color instead. Glyphs stay stock random katakana.
-  # Literal replace, no whitespace risk.
+  # the matrix color instead. Glyphs: roll an index into 0-9A-Za-z instead
+  # of the katakana range, so the rain is letters and numbers only.
+  # Length/space rolls use different expressions and are untouched.
+  # Literal replaces, no whitespace risk.
   cmatrixBlue = pkgs.cmatrix.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
       substituteInPlace cmatrix.c \
-        --replace 'COLOR_PAIR(COLOR_WHITE)' 'COLOR_PAIR(mcolor)'
+        --replace 'COLOR_PAIR(COLOR_WHITE)' 'COLOR_PAIR(mcolor)' \
+        --replace '(int) rand() % randnum + randmin' '"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[rand() % 62]'
     '';
   });
   # lavat takes hex without '#'; use the Stylix accent for both ends
