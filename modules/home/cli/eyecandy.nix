@@ -2,7 +2,7 @@
 # Kitty's colors 0-7 are Stylix base00/08/0B/0A/0D/0E/0C/05, so the Nix
 # code below picks the slot nearest the accent at build time — everything
 # follows wallpaper changes on rebuild, no exceptions.
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   c = config.lib.stylix.colors;
 
@@ -36,6 +36,15 @@ let
   # cmatrix only takes color names, so map the accent's nearest ANSI slot.
   cmatrixNames = [ "black" "red" "green" "yellow" "blue" "magenta" "cyan" "white" ];
   cmatrixColor = builtins.elemAt cmatrixNames nearestIdx;
+  # Stock cmatrix hardcodes WHITE stream heads (COLOR_WHITE in cmatrix.c),
+  # so no flag combo can ever be single-color. Reword those two sites to
+  # the matrix color at build time — literal replace, no whitespace risk.
+  cmatrixBlue = pkgs.cmatrix.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace cmatrix.c \
+        --replace 'COLOR_PAIR(COLOR_WHITE)' 'COLOR_PAIR(mcolor)'
+    '';
+  });
   # lavat takes hex without '#'; use the Stylix accent for both ends
   # (uniform flat color, gradient flags kept).
   lavatHex = lib.toUpper c.base0D;
@@ -43,8 +52,8 @@ in {
   home.shellAliases = {
     # Big centered clock with seconds, in the ANSI slot closest to the accent
     tty-clock = "tty-clock -s -c -C${nearestANSI}";
-    # Matrix rain, bold, accent-colored
-    cmatrix = "cmatrix -b -C ${cmatrixColor}";
+    # Matrix rain, bold, accent-colored, single color (patched heads)
+    cmatrix = "${cmatrixBlue}/bin/cmatrix -b -C ${cmatrixColor}";
     # Lava lamp: flat Stylix accent, uniform, not a gradient.
     lavat = "lavat -g -c ${lavatHex} -k ${lavatHex} -G";
   };
