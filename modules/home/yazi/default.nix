@@ -36,8 +36,8 @@ in {
     # Filenames stay stylix white via filetype rules below.
     "yazi/theme.toml".text = ''
       [mgr]
-      hovered = { bg = "${hex c.base02}" }
-      preview_hovered = { bg = "${hex c.base02}" }
+      hovered = { bg = "${hex c.base01}" }
+      preview_hovered = { bg = "${hex c.base01}" }
       find_keyword = { fg = "${hex c.base0A}", bold = true }
       find_position = { fg = "${hex c.base0D}", bold = true }
       marker_selected = { fg = "${hex c.base0A}", bg = "${hex c.base0A}" }
@@ -109,7 +109,10 @@ in {
             un_set = catppuccin_palette.red,
           },
         },
-        style_b = { bg = catppuccin_palette.surface0, fg = catppuccin_palette.text },
+        -- No light pill backgrounds anywhere: b/c sections render bare
+        -- text on the bar background. (style_a above is untouched — the
+        -- mode pill already renders correctly.)
+        style_b = { bg = catppuccin_palette.base, fg = catppuccin_palette.text },
         style_c = { bg = catppuccin_palette.base, fg = catppuccin_palette.text },
 
         permissions_t_fg = catppuccin_palette.green,
@@ -129,7 +132,7 @@ in {
         processed = { icon = "", fg = catppuccin_palette.green },
 
         tab_width = 20,
-        tab_use_inverse = true,
+        tab_use_inverse = false,
 
         show_background = false,
 
@@ -154,7 +157,10 @@ in {
         status_line = {
           left = {
             section_a = {
-              { type = "string", custom = false, name = "tab_mode" },
+              -- Static "NOR": yatline's tab_mode hardcodes NORMAL/SELECT,
+              -- no shortening option exists. Tradeoff: it won't change in
+              -- select mode. Matches the reference otherwise.
+              { type = "string", custom = true, name = "NOR" },
             },
             section_b = {
               { type = "string", custom = false, name = "hovered_size" },
