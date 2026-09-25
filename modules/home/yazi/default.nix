@@ -28,12 +28,9 @@ in {
     "yazi/flavors".source = ./flavors;
     "yazi/plugins".source = ./plugins;
 
-    # Minimal stylix theme: white names, blue folder icons, subtle hover.
+    # Minimal stylix theme: white names, subtle hover, NO icons at all —
+    # empty cond texts render zero-width, so filenames take the full row.
     # No flavor (flavors override all of this).
-    # Icon rules: yazi's built-in devicons stay stock. An earlier attempt
-    # overrode everything with generic conds, which rendered as blank
-    # (empty text = no glyph). Stock devicons it is.
-    # Filenames stay stylix white via filetype rules below.
     "yazi/theme.toml".text = ''
       [mgr]
       hovered = { bg = "${hex c.base01}" }
@@ -44,6 +41,16 @@ in {
       marker_copied = { fg = "${hex c.base0B}", bg = "${hex c.base0B}" }
       marker_cut = { fg = "${hex c.base08}", bg = "${hex c.base08}" }
       border_style = { fg = "${hex c.base03}" }
+
+      [icon]
+      globs = []
+      dirs = []
+      files = []
+      exts = []
+      conds = [
+        { if = "dir", text = "" },
+        { if = "!dir", text = "" },
+      ]
 
       [filetype]
       rules = [
