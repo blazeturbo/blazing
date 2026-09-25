@@ -15,13 +15,15 @@ let
   blazeScript = pkgs.writeShellScriptBin "blaze" ''
     set -euo pipefail
 
-    # Colors dynamically derived from Stylix wallpaper theme!
-    COLOR_TITLE="${c_base0E}"
+    # Everything blaze prints is Stylix base0D blue, always — every
+    # named var points at the same color on purpose. Terminal colors
+    # untouched, this is blaze output only.
+    COLOR_TITLE="${c_base0D}"
     COLOR_BLUE="${c_base0D}"
-    COLOR_CYAN="${c_base0C}"
-    COLOR_GREEN="${c_base0B}"
-    COLOR_YELLOW="${c_base0A}"
-    COLOR_RED="${c_base08}"
+    COLOR_CYAN="${c_base0D}"
+    COLOR_GREEN="${c_base0D}"
+    COLOR_YELLOW="${c_base0D}"
+    COLOR_RED="${c_base0D}"
     BOLD="${c_bold}"
     NC="${c_reset}"
 
@@ -44,7 +46,7 @@ let
 
     print_help() {
       print_banner
-      echo -e "''${BOLD}Commands:''${NC}"
+      echo -e "''${BOLD}''${COLOR_BLUE}Commands:''${NC}"
       echo -e "  ''${COLOR_CYAN}rebuild''${NC}           Rebuild and switch to the new system generation"
       echo -e "  ''${COLOR_CYAN}rebuild-boot''${NC}      Rebuild and set as default for next boot"
       echo -e "  ''${COLOR_CYAN}test''${NC}              Build and activate temporarily without boot entry"
@@ -60,7 +62,7 @@ let
       echo -e "  ''${COLOR_CYAN}cleanup''${NC}           Garbage collect and remove old generations"
       echo -e "  ''${COLOR_CYAN}help''${NC}              Show this help message"
       echo
-      echo -e "''${BOLD}Options:''${NC}"
+      echo -e "''${BOLD}''${COLOR_BLUE}Options:''${NC}"
       echo -e "  --dry, -n         Show what would be built without executing"
       echo -e "  --ask, -a         Ask for confirmation before proceeding (nh)"
       echo -e "  --verbose, -v     Verbose output"
@@ -170,13 +172,13 @@ let
 
       status|st)
         print_banner
-        echo -e "''${BOLD}=== Git status ===''${NC}"
+        echo -e "''${BOLD}''${COLOR_BLUE}=== Git status ===''${NC}"
         git -C "$FLAKE_DIR" status --short || true
         echo
-        echo -e "''${BOLD}=== Recent commits ===''${NC}"
+        echo -e "''${BOLD}''${COLOR_BLUE}=== Recent commits ===''${NC}"
         git -C "$FLAKE_DIR" log --oneline -8 || true
         echo
-        echo -e "''${BOLD}=== Current generation ===''${NC}"
+        echo -e "''${BOLD}''${COLOR_BLUE}=== Current generation ===''${NC}"
         nixos-rebuild list-generations 2>/dev/null | head -3 || true
         ;;
 
@@ -210,10 +212,10 @@ let
 
       list-gens)
         print_banner
-        echo -e "''${BOLD}=== System Generations ===''${NC}"
+        echo -e "''${BOLD}''${COLOR_BLUE}=== System Generations ===''${NC}"
         nix profile history --profile /nix/var/nix/profiles/system || true
         echo
-        echo -e "''${BOLD}=== User Generations ===''${NC}"
+        echo -e "''${BOLD}''${COLOR_BLUE}=== User Generations ===''${NC}"
         nix-env --list-generations || true
         ;;
 
