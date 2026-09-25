@@ -191,6 +191,15 @@ in {
     serviceConfig.Type = "oneshot";
   };
 
+  # Power backends for Noctalia (always on, even if performanceMode=false).
+  # UPower = battery/device info. PPD = Performance/Balanced profiles that
+  # Noctalia switches. Neither auto-switches anything — boot default is
+  # forced to `performance` below, you change it yourself in Noctalia.
+  # thermald/tlp/auto-cpufreq/powertop stay off (see performance.nix) —
+  # those are the ones that would fight the governor behind your back.
+  services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
+
   # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
   environment.sessionVariables = {
     XCURSOR_THEME = "catppuccin-mocha-light-cursors";

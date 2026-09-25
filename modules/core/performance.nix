@@ -33,11 +33,29 @@ in {
     '';
 
     # Make sure no power-saver daemon fights the governor.
+    # NOTE: power-profiles-daemon stays ON on purpose — Noctalia needs it
+    # for the Power page, and it never auto-switches. Boot default is
+    # forced to `performance` by the oneshot below; Balanced/Saver only
+    # ever apply if YOU pick them in Noctalia.
     services.thermald.enable = lib.mkForce false;
     services.tlp.enable = lib.mkForce false;
-    services.power-profiles-daemon.enable = lib.mkForce false;
     services.auto-cpufreq.enable = lib.mkForce false;
     powerManagement.powertop.enable = false;
+
+    # PPD boots to Balanced by default — that would be a saver on day one.
+    # Force `performance` at boot to match the max-perf intent. Manual
+    # after that: whatever you pick in Noctalia sticks until next boot.
+    systemd.services.set-power-profile-performance = {
+      description = "Default power profile to performance (performanceMode)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "power-profiles-daemon.service" ];
+      wants = [ "power-profiles-daemon.service" ];
+      path = with pkgs; [ power-profiles-daemon ];
+      script = ''
+        powerprofilesctl set performance >>/var/log/set-power-profile.log 2>&1 || true
+      '';
+      serviceConfig.Type = "oneshot";
+    };
 
     # Turbo stays on (0 = enabled). Some BIOSes/playbooks leave
     # no_turbo=1 around; force it off every boot.
