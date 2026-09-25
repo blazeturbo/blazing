@@ -30,11 +30,10 @@ in {
 
     # Minimal stylix theme: white names, blue folder icons, subtle hover.
     # No flavor (flavors override all of this).
-    # Icon rules: yazi matches globs -> named dirs/files/exts -> conds,
-    # so generic conds alone LOSE to the built-in per-name devicons
-    # (that mixed mess was the "broken" look). Empty tables replace the
-    # built-ins, leaving ONLY the two generic conds: every folder gets
-    # the same blue folder glyph, every file the same white file glyph.
+    # Icon rules: yazi's built-in devicons stay stock. An earlier attempt
+    # overrode everything with generic conds, which rendered as blank
+    # (empty text = no glyph). Stock devicons it is.
+    # Filenames stay stylix white via filetype rules below.
     "yazi/theme.toml".text = ''
       [mgr]
       hovered = { bg = "${hex c.base02}" }
@@ -45,16 +44,6 @@ in {
       marker_copied = { fg = "${hex c.base0B}", bg = "${hex c.base0B}" }
       marker_cut = { fg = "${hex c.base08}", bg = "${hex c.base08}" }
       border_style = { fg = "${hex c.base03}" }
-
-      [icon]
-      globs = []
-      dirs = []
-      files = []
-      exts = []
-      conds = [
-        { if = "dir", text = "", fg = "${hex c.base0D}" },
-        { if = "!dir", text = "", fg = "${hex c.base05}" },
-      ]
 
       [filetype]
       rules = [
@@ -149,9 +138,7 @@ in {
 
         header_line = {
           left = {
-            section_a = {
-              { type = "line", custom = false, name = "tabs", params = { "left" } },
-            },
+            section_a = {},
             section_b = {},
             section_c = {},
           },
