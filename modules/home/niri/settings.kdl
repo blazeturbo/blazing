@@ -99,8 +99,9 @@ gestures {
         max-speed 1500
     }
 
+    // Hot corners OFF on purpose — overview lives on Mod+Grave only.
+    // (List corners like `top-left` here to re-enable.)
     hot-corners {
-        top-left
     }
 }
 
