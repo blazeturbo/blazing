@@ -15,6 +15,7 @@ binds {
     Mod+N            hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia" "msg" "panel-toggle" "control-center" "notifications"; }
     Mod+Shift+V      hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
     Mod+Shift+Comma  hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "msg" "settings-toggle"; }
+    Mod+X            hotkey-overlay-title="Noctalia Session menu" { spawn "noctalia" "msg" "panel-toggle" "session"; }
 
     // Application Launchers
     Mod+Q            hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
@@ -87,7 +88,7 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
 
     Mod+Shift+X { toggle-column-tabbed-display; }
-    Mod+X       { switch-focus-between-floating-and-tiling; }
+    Mod+Shift+Z { switch-focus-between-floating-and-tiling; }
 
     // Mouse & Touchpad Wheels
     Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }

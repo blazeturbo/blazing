@@ -99,11 +99,11 @@ gestures {
         max-speed 1500
     }
 
-    // Hot corners OFF on purpose — overview lives on Mod+Grave only.
-    // (Empty block would mean DEFAULT = top-left active. `off` truly
-    // disables. List corners like `top-left` to re-enable.)
+    // Top-left hot corner back on (Niri default) — hover the corner for
+    // overview. Overview itself stays on Mod+Grave too. `off` disables
+    // entirely; list corners like `top-right` to add more.
     hot-corners {
-        off
+        top-left
     }
 }
 
