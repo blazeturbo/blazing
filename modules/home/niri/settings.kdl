@@ -100,8 +100,10 @@ gestures {
     }
 
     // Hot corners OFF on purpose — overview lives on Mod+Grave only.
-    // (List corners like `top-left` here to re-enable.)
+    // (Empty block would mean DEFAULT = top-left active. `off` truly
+    // disables. List corners like `top-left` to re-enable.)
     hot-corners {
+        off
     }
 }
 
