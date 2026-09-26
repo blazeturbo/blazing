@@ -120,10 +120,17 @@ window-rule {
     min-height 100
 }
 
-// Sober skips the compositor eye-candy (no per-frame blur/xray cost).
+// Sober/Roblox: maximized from the first frame, no compositor eye-candy.
+// Maximized gives the game one stable size from the first configure —
+// tiling resize storms permanently invalidate Vulkan swapchains
+// (VK_ERROR_OUT_OF_DATE_KHR loop, window never presents). Blur/xray off:
+// per-frame compositor effects are pure GPU waste on a game.
 // Shadows deliberately left alone.
 window-rule {
     match app-id=r#"org\.vinegarhq\.Sober"#
+    match title=r#"^Roblox$"#
+
+    open-maximized true
 
     background-effect {
         xray false
