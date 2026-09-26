@@ -34,16 +34,18 @@
     shellIntegration.mode = "enabled";
 
     extraConfig = ''
-      # Hardcoded background (overrides Stylix): pure black #000000 for
-      # the monochrome look. Never Stylix: wallpaper-driven base00 swings
-      # the terminal bg on every theme change, unreadable half the time.
+      # Hardcoded background (overrides Stylix): jet black #000000.
+      # Won the shootout vs #0A0A0A/#111111. Never Stylix:
+      # wallpaper-driven base00 swings the terminal bg on every theme
+      # change, unreadable half the time.
       # extraConfig applies after all generated settings, so this wins while
       # absolutely everything else keeps flowing from the Stylix theme.
       background #000000
       # More see-through than Stylix's 0.9: background shows through.
       background_opacity 0.8
-      # No focus-based fading: hovered/focused and unfocused windows look
-      # identical (Kitty dims inactive windows by default via dim_opacity).
+      # No inactive-window fading: dim_opacity pins the DIM text attribute
+      # to full brightness, inactive_text_alpha keeps unfocused content
+      # fully opaque — every window looks identical, focused or not.
       dim_opacity 1.0
       inactive_text_alpha 1.0
 
