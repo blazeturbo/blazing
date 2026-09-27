@@ -22,7 +22,6 @@ binds {
     Mod+Return       hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
     Mod+E            hotkey-overlay-title="Open File Manager" { spawn "sh" "-c" "xdg-open \"$HOME\""; }
     Mod+B            hotkey-overlay-title="Open Browser: helium" { spawn "/home/astrid/Applications/helium-0.17.1.1-x86_64.AppImage" "--ozone-platform-hint=auto"; }
-    Mod+T            hotkey-overlay-title="Clock in DejaVu Sans" { spawn "kitty" "-o" "font_family=DejaVu Sans" "--title" "tty-clock" "tty-clock" "-c" "-s"; }
 
     // Screenshots (Noctalia screenshotter)
     Mod+Shift+S      hotkey-overlay-title="Screenshot region" { spawn "noctalia" "msg" "screenshot-region"; }
