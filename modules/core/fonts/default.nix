@@ -5,6 +5,7 @@
 {
   fonts.packages = with pkgs; [
     (callPackage ./jetbrains-mono-nerd.nix { })
+    (callPackage ./roman-pills.nix { })
     nerd-fonts.dejavu-sans-mono
   ];
 }
