@@ -21,6 +21,12 @@ in {
     pkgs.matugen
   ];
 
+  # Curated base config lives in the repo (noctalia-config.toml).
+  # Noctalia only ever writes its GUI state to ~/.local/state, never here,
+  # so managing this file is safe. First switch backs up your hand-written
+  # one to *.backup via home-manager.backupFileExtension.
+  xdg.configFile."noctalia/config.toml".source = ./noctalia-config.toml;
+
   systemd.user.services.noctalia = {
     Unit = {
       Description = "Noctalia panel service";

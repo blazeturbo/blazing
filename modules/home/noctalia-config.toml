@@ -1,0 +1,10 @@
+# Curated Noctalia base config (GUI overrides live in
+# ~/.local/state/noctalia/settings.toml and win over this file).
+# Managed by home-manager (see noctalia.nix) — edit here, rebuild, done.
+[shell.screenshot]
+directory = "~/Pictures/Screenshots"
+
+# Workspace pills render in RomanPills (repo modules/core/fonts/):
+# ASCII digits draw as Roman numerals, Niri stays untouched.
+[widget.workspaces]
+font_family = "Roman Pills"
