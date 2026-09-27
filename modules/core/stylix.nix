@@ -7,9 +7,8 @@ in {
     image = stylixImage;
     polarity = "dark";
     opacity.terminal = 0.90;
-    # No cursor set here on purpose: the Catppuccin Mocha Light theme
-    # lives in ~/.local/share/icons and is picked up via XCURSOR_THEME
-    # (see environment.sessionVariables in hosts/nixos/default.nix).
+    # No cursor set here on purpose: home.pointerCursor owns the
+    # Catppuccin Mocha Rosewater theme (see modules/home/stylix.nix).
     fonts = {
       monospace = {
         package = pkgs.callPackage ./fonts/jetbrains-mono-nerd.nix { };

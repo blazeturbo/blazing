@@ -200,11 +200,8 @@ in {
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
 
-  # Custom cursor from ~/.local/share/icons (NOT the Nix store on purpose)
-  environment.sessionVariables = {
-    XCURSOR_THEME = "catppuccin-mocha-light-cursors";
-    XCURSOR_SIZE = "24";
-  };
+  # Cursor env (XCURSOR_THEME/SIZE) comes from home.pointerCursor in
+  # modules/home/stylix.nix now — no manual block here anymore.
 
   # NOTE: the `fastfetch` binary stays on purpose: fastfetch2 IS
   # fastfetch-powered (its info panel + spinning logo both call it).
