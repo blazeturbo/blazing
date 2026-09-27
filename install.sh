@@ -575,6 +575,10 @@ if [ "$SWITCH" -eq 1 ]; then
         --flake "$DEST#$HOSTNAME"
 
     log "Installation complete."
+    log "Already handled by the rebuild: cursor theme, fonts,"
+    log "Noctalia base config, Niri/Kitty/Zsh configs (home-manager)."
+    log "Still manual: Helium AppImage into ~/Applications (see README),"
+    log "then log into Spotify/Discord once each."
     log "A reboot is recommended."
 else
     log "Skipping nixos-rebuild switch (--no-switch)."

@@ -37,8 +37,9 @@ C close, Shift+S screenshot, Shift+D launcher, N notifications,
 Shift+V clipboard.
 
 Bits that live outside the repo: Helium AppImage goes in
-`~/Applications` with a desktop file, cursor theme unzipped into
-`~/.local/share/icons`, Spotify just wants one login.
+`~/Applications` with a desktop file, Spotify just wants one login.
+(Cursor theme and Noctalia base config used to be manual too — both ride
+along with the rebuild now.)
 
 ## Layout
 
