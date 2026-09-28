@@ -152,17 +152,22 @@ in {
   '';
 
   # Custom layout: replaces kew's default current.layout (all sections
-  # must exist or kew quits — the rest is verbatim upstream v4.3.4).
+  # must exist or kew quits — the rest is verbatim upstream v4.3.6).
   # version MUST match the shipped current.layout for the installed kew
-  # (12 for 4.3.4): on a kew update, re-check upstream and bump it here,
+  # (14 for 4.3.6): on a kew update, re-check upstream and bump it here,
   # or kew refuses to start. `nix eval` can't catch that; watch it.
+  # force: kew rewrites this file at runtime (migrations, tweaks), which
+  # breaks the symlink — without force, every other rebuild dies on the
+  # stale .backup collision. Repo owns the design; runtime tweaks don't
+  # survive a rebuild, by design.
   # What changed vs default: [track] is rebuilt from parts instead of
   # the monolithic `track` component. The cover gets its own row sized
   # to 38% of the height, so the square image renders smaller than full
   # bleed (side padding for free), and metadata/time/visualizer rows sit
   # immediately below it — no more dead gap, text stays glued to the art.
+  xdg.configFile."kew/layouts/current.layout".force = true;
   xdg.configFile."kew/layouts/current.layout".text = ''
-    version=12
+    version=14
 
     [footer_pane]
 
