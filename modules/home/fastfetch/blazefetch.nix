@@ -1,4 +1,4 @@
-# fastfetch2 – areofyl/fetch, vendored in full under ./fetch-src and patched
+# blazefetch – areofyl/fetch, vendored in full under ./fetch-src and patched
 # so the info panel comes from OUR fastfetch config instead of its native
 # gatherers (see fetch-src/fetch.c: config_info_command). The spinning 3D
 # logo engine is 100% upstream.
@@ -58,8 +58,8 @@ in
     logo_inner=${accentName}
   '';
 
-  # Alias so `fastfetch2` calls it (infinite spin, no frame cap)
+  # Alias so `blazefetch` calls it (infinite spin, no frame cap)
   home.shellAliases = {
-    fastfetch2 = "fetch --infinite";
+    blazefetch = "fetch --infinite";
   };
 }

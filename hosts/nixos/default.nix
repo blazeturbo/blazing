@@ -203,9 +203,9 @@ in {
   # Cursor env (XCURSOR_THEME/SIZE) comes from home.pointerCursor in
   # modules/home/stylix.nix now — no manual block here anymore.
 
-  # NOTE: the `fastfetch` binary stays on purpose: fastfetch2 IS
+  # NOTE: the `fastfetch` binary stays on purpose: blazefetch IS
   # fastfetch-powered (its info panel + spinning logo both call it).
-  # Removing it would break fastfetch2.
+  # Removing it would break blazefetch.
   environment.systemPackages = with pkgs; [
     git
     gh # github CLI (releases, uploads)
