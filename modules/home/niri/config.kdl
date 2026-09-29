@@ -2,14 +2,15 @@
 prefer-no-csd
 
 // Monitor Output Settings (Samsung Odyssey G40B @ 240Hz / 239.76Hz)
+// No variable-refresh-rate: HDMI can't do VRR, the flag was a no-op
+// (niri msg outputs: "not supported"). If you ever move to DisplayPort,
+// re-add `variable-refresh-rate` (or `on-demand=true`) to the DP-1 block.
 output "HDMI-A-1" {
     mode "1920x1080@239.760"
-    variable-refresh-rate
 }
 
 output "DP-1" {
     mode "1920x1080@239.760"
-    variable-refresh-rate
 }
 
 include "autostart.kdl"
