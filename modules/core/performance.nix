@@ -45,14 +45,23 @@ in {
     # PPD boots to Balanced by default — that would be a saver on day one.
     # Force `performance` at boot to match the max-perf intent. Manual
     # after that: whatever you pick in Noctalia sticks until next boot.
+    # Retry loop: PPD exposes no profiles for ~seconds after its unit is
+    # "active" (log showed `invalid choice: 'performance' (choose from )`),
+    # so poll until the profile appears instead of firing once into the void.
     systemd.services.set-power-profile-performance = {
       description = "Default power profile to performance (performanceMode)";
       wantedBy = [ "multi-user.target" ];
       after = [ "power-profiles-daemon.service" ];
       wants = [ "power-profiles-daemon.service" ];
-      path = with pkgs; [ power-profiles-daemon ];
+      path = with pkgs; [ power-profiles-daemon coreutils gnugrep ];
       script = ''
-        powerprofilesctl set performance >>/var/log/set-power-profile.log 2>&1 || true
+        for i in $(seq 1 30); do
+          if powerprofilesctl list 2>/dev/null | grep -q "performance"; then
+            powerprofilesctl set performance >>/var/log/set-power-profile.log 2>&1 && break
+          fi
+          sleep 1
+        done
+        powerprofilesctl get >>/var/log/set-power-profile.log 2>&1 || true
       '';
       serviceConfig.Type = "oneshot";
     };

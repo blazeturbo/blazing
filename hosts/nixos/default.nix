@@ -191,6 +191,22 @@ in {
     serviceConfig.Type = "oneshot";
   };
 
+  # Sober (Roblox flatpak) can never trigger GameMode without this:
+  # its sandbox has no talk-name=com.feralinteractive.GameMode, so
+  # renice + nv_powermizer_mode=1 above never fire. Idempotent override;
+  # launch Sober via `sober-perf` (gamemoderun wrapper) below.
+  systemd.services.flatpak-sober-gamemode = {
+    description = "Let Sober flatpak talk to host GameMode";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [ flatpak ];
+    script = ''
+      flatpak override --talk-name=com.feralinteractive.GameMode org.vinegarhq.Sober 2>&1 || true
+    '';
+    serviceConfig.Type = "oneshot";
+  };
+
   # Power backends for Noctalia (always on, even if performanceMode=false).
   # UPower = battery/device info. PPD = Performance/Balanced profiles that
   # Noctalia switches. Neither auto-switches anything — boot default is
@@ -227,6 +243,12 @@ in {
     lavat
     mpv
     hyprpolkitagent # polkit auth dialog agent (no desktop file clutter)
+    # Sober via host GameMode: triggers renice + nv_powermizer_mode=1
+    # (which never fire from inside the flatpak sandbox alone). Vulkan
+    # stays as-is — no OpenGL fallback anywhere.
+    (writeShellScriptBin "sober-perf" ''
+      exec ${gamemode}/bin/gamemoderun ${flatpak}/bin/flatpak run org.vinegarhq.Sober "$@"
+    '')
   ];
 
   # 8GB swapfile safety net (root is ext4, so this just works;
