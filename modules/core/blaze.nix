@@ -61,6 +61,7 @@ let
       echo -e "  ''${COLOR_CYAN}list-gens''${NC}         List system and user generations"
       echo -e "  ''${COLOR_CYAN}cleanup''${NC}           Garbage collect and remove old generations"
       echo -e "  ''${COLOR_CYAN}flatpak-sync''${NC}      Show host vs Flatpak Nvidia, then manual update/prune"
+      echo -e "  ''${COLOR_CYAN}jp2a''${NC}              JPEG to ASCII (vendored cslarsen/jp2a, e.g. logo pipeline)"
       echo -e "  ''${COLOR_CYAN}help''${NC}              Show this help message"
       echo
       echo -e "''${BOLD}''${COLOR_BLUE}Options:''${NC}"
@@ -245,6 +246,19 @@ let
         echo -e "''${COLOR_GREEN}==> Pruning unused runtimes (you approve)...''${NC}"
         flatpak uninstall --unused "$@"
         echo -e "''${COLOR_GREEN}✔ Flatpak synced to host driver!''${NC}"
+        ;;
+
+      jp2a)
+        # Vendored cslarsen/jp2a, installed natively via home.packages
+        # (modules/home/fastfetch/jp2a.nix). Passthrough so `blaze jp2a`
+        # works with the full upstream flags, e.g.:
+        #   blaze jp2a --width=60 -i /tmp/logo.jpg > ~/.config/fetch/logo.txt
+        if command -v jp2a >/dev/null 2>&1; then
+          jp2a "$@"
+        else
+          echo -e "''${COLOR_YELLOW}jp2a not on PATH yet — run 'blaze rebuild' first''${NC}"
+          exit 1
+        fi
         ;;
 
       help|--help|-h)

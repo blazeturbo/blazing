@@ -58,24 +58,40 @@ in
     logo_inner=${accentName}
   '';
 
-  # Custom blaze flame: declarative so rebuilds keep it. No `# distro:`
-  # line on purpose — without it fetch uses logo_outer/logo_inner above,
-  # so the flame stays uniform Stylix-accent tracked. Mixed weights
-  # (. : @ M #) give the 3D relief depth; shading stays ascii, spin untouched.
+  # Custom logo from ~/Downloads/logo.avif (740x740): converted with temp
+  # nix-shell ffmpeg (avif -> JPEG) then vendored `blaze jp2a`
+  # (`jp2a --width=60 -i`, inverted so the emblem pops on dark terminals).
+  # No `# distro:` line on purpose — without it fetch uses
+  # logo_outer/logo_inner above, so the logo stays uniform Stylix-accent
+  # tracked. Mixed weights (spaces . , ; : l o x k O 0) give the 3D relief
+  # depth; shading stays ascii, spin untouched. Re-run the pipeline any
+  # time: ffmpeg -i ~/Downloads/logo.avif /tmp/logo.jpg &&
+  # blaze jp2a --width=60 -i /tmp/logo.jpg
   xdg.configFile."fetch/logo.txt".text = ''
-            .  .
-            @  @
-           .@MM@.
-            @MM@M
-           @MMMMM
-          @MM##MM@
-         .MM####M.
-         MM######M
-        @MM######M@
-        MMM#####MMM
-        .MM###MMMM.
-         .MM@@@@MM.
-           .:MM:.
+                               ;;
+                              l00l
+                             d0000d.
+                           .x00OO00k.
+                          'kOOk..kOOk,
+                         ;OOOd.  .dOOO;
+           lxxxxxxxxxxxxxkkkkxxxxxxkkkkxxxxxxxxxxxxxl
+            :kkkkxddddxkkkkddddddddddkkkkxdddddkkkkc
+             ,xxxo.  .oxxd'          .dxxo.   lxxx,
+              .dxdo..dxdo.            .oddd'.oddd.
+               .lddddddl                cddddddl.
+                 cxxxx:                  :xxxxl
+                 lxxxxc                  cxxxxo.
+               .dkkxxkko.               okkkxkkd.
+              .xkkx..xkkx.            .xkkx'.xkkk'
+             ;kOOo.  .dOOk,          'kOOd.   oOOk:
+            cOOOOkkkkkkOOOOkkkkkkkkkkOOOOkkkkkkOOOOl
+           lkkkkkkkkkkkkkOOOOkkkkkkOOOOkkkkkkkkkkkkko
+                         ;O00x.  .x00O;
+                          .O00O'.k00O'
+                           .x000000k.
+                             d0000d
+                              c00l
+                               ,,
   '';
 
   # Alias so `blazefetch` calls it (infinite spin, no frame cap)

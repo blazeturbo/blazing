@@ -8,7 +8,7 @@ let
   wmColor = "#${c.base0D}";
   pcColor = "#${c.base0D}";
 in {
-  imports = [ ./blazefetch.nix ];
+  imports = [ ./blazefetch.nix ./jp2a.nix ];
 
   programs.fastfetch = {
     enable = true;
