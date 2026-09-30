@@ -58,6 +58,26 @@ in
     logo_inner=${accentName}
   '';
 
+  # Custom blaze flame: declarative so rebuilds keep it. No `# distro:`
+  # line on purpose — without it fetch uses logo_outer/logo_inner above,
+  # so the flame stays uniform Stylix-accent tracked. Mixed weights
+  # (. : @ M #) give the 3D relief depth; shading stays ascii, spin untouched.
+  xdg.configFile."fetch/logo.txt".text = ''
+            .  .
+            @  @
+           .@MM@.
+            @MM@M
+           @MMMMM
+          @MM##MM@
+         .MM####M.
+         MM######M
+        @MM######M@
+        MMM#####MMM
+        .MM###MMMM.
+         .MM@@@@MM.
+           .:MM:.
+  '';
+
   # Alias so `blazefetch` calls it (infinite spin, no frame cap)
   home.shellAliases = {
     blazefetch = "fetch --infinite";
