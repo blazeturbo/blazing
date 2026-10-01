@@ -12,8 +12,6 @@ let
   # Dividers follow the theme blue, values follow the foreground
   # (near-white). No nerd icons, no profile row.
   divColor = "#${themeBlue}";
-  # Plain divider (no nerd icons per request).
-  div = "────────────────────────────────────────────";
 in {
   imports = [ ./blazefetch.nix ./jp2a.nix ];
 
@@ -21,12 +19,17 @@ in {
     enable = true;
 
     settings = {
+      "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
       display = {
         color = {
           keys = "#${themeBlue}";
           output = "#${c.base05}";
         };
-        separator = "";
+        separator = " ";
+        size = {
+          binaryPrefix = "iec";
+          ndigits = 1;
+        };
       };
 
       logo = {
@@ -39,103 +42,154 @@ in {
         };
       };
 
-      # Block layout (reference rice, de-iconed): divider rows between
-      # accent header blocks with default white-ish values. No title/
-      # profile row, no nerd icons anywhere. fetch draws its own title.
+      # Boxed layout (reference rice, de-iconed): System / Hardware /
+      # Status boxes with theme-blue borders + headers, white values.
+      # No title/profile row, no nerd icons, no battery (desktop).
+      # fetch draws its own title row above this.
       modules = [
         {
           type = "custom";
-          key = div;
-          keyColor = divColor;
-        }
-        {
-          type = "cpu";
-          format = "{name}";
-          key = "PROCS ";
-          keyColor = osColor;
-        }
-        {
-          type = "gpu";
-          format = "{vendor} {name}";
-          key = "GRAPH ";
-          keyColor = osColor;
-        }
-        {
-          type = "memory";
-          format = "";
-          key = "MEMRY ";
-          keyColor = osColor;
-        }
-        {
-          type = "custom";
-          key = div;
+          key = "┌────────────────────── System ──────────────────────┐";
           keyColor = divColor;
         }
         {
           type = "os";
-          format = "{pretty-name}";
-          key = "OPSYS ";
+          format = "{pretty-name} {arch}";
+          key = " OS";
           keyColor = osColor;
         }
         {
-          type = "custom";
-          key = div;
-          keyColor = divColor;
-        }
-        {
-          type = "display";
-          format = "{inch}\" {refresh-rate}Hz {width}x{height} {name}";
-          key = "DISPY ";
+          type = "kernel";
+          format = "{sysname} {release}";
+          key = " Kernel";
           keyColor = osColor;
         }
         {
-          type = "custom";
-          key = div;
-          keyColor = divColor;
-        }
-        {
-          type = "shell";
-          format = "{process-name} - {pretty-name}";
-          key = "SHELL ";
+          type = "wm";
+          format = "{pretty-name} ({protocol-name})";
+          key = " WM";
           keyColor = osColor;
         }
         {
           type = "terminal";
-          format = "{pretty-name}";
-          key = "TRMAL ";
+          format = "{pretty-name} {version}";
+          key = " Terminal";
           keyColor = osColor;
         }
         {
           type = "terminalfont";
           format = "{name}";
-          key = "TRFNT ";
+          key = " Font";
+          keyColor = osColor;
+        }
+        {
+          type = "shell";
+          format = "{pretty-name} {version}";
+          key = " Shell";
+          keyColor = osColor;
+        }
+        {
+          type = "packages";
+          format = "{appimage} (appimage), {flatpak-all} (flatpak), {nix-system} (nix-system), {nix-user} (nix-user)";
+          key = " Packages";
           keyColor = osColor;
         }
         {
           type = "custom";
-          key = div;
+          key = "└────────────────────────────────────────────────────┘";
           keyColor = divColor;
+        }
+        {
+          type = "custom";
+          key = "┌───────────────────── Hardware ─────────────────────┐";
+          keyColor = divColor;
+        }
+        {
+          type = "host";
+          format = "{name}";
+          key = " Host";
+          keyColor = osColor;
+        }
+        {
+          type = "command";
+          key = " CPU";
+          keyColor = osColor;
+          text = "N=$(grep -m1 \"model name\" /proc/cpuinfo | cut -d: -f2 | sed -E 's/ *\\(R\\)//g; s/ *\\(TM\\)//g; s/[0-9]+th Gen //g; s/CPU //g; s/@.*//g; s/^ +| +$//g; s/ +/ /g'); M=$(lscpu | grep \"CPU max MHz\" | cut -d: -f2 | tr ',' '.' | cut -d. -f1 | tr -d ' '); if [ -n \"$M\" ]; then echo \"$N @ $((M / 1000)).$(( (M % 1000) / 10 )) GHz\"; else echo \"$N\"; fi";
+        }
+        {
+          type = "gpu";
+          format = "{vendor} {name}";
+          key = " GPU";
+          keyColor = osColor;
+        }
+        {
+          type = "display";
+          format = "{width}x{height} @ {refresh-rate}Hz";
+          key = " Resolution";
+          keyColor = osColor;
+        }
+        {
+          type = "memory";
+          format = "{used} / {total} ({percentage})";
+          key = " Memory";
+          keyColor = osColor;
+        }
+        {
+          type = "swap";
+          format = "{used} / {total} ({percentage})";
+          key = " Swap";
+          keyColor = osColor;
         }
         {
           type = "disk";
-          format = "{size-used} / {size-total}";
-          key = "DISKS ";
+          format = "{size-used} / {size-total} ({size-percentage}) - {filesystem} [{mountpoint}]";
+          folders = [ "/" ];
+          key = " Disk";
           keyColor = osColor;
         }
         {
           type = "custom";
-          key = div;
+          key = "└────────────────────────────────────────────────────┘";
           keyColor = divColor;
         }
         {
-          type = "localip";
-          format = "{ifname} {ipv4}";
-          key = "IPADD ";
+          type = "custom";
+          key = "┌────────────────────── Status ──────────────────────┐";
+          keyColor = divColor;
+        }
+        {
+          type = "datetime";
+          format = "{day-in-month}.{month-pretty}.{year} {hour-pretty}:{minute-pretty}:{second-pretty}";
+          key = " Date";
+          keyColor = osColor;
+        }
+        {
+          type = "processes";
+          format = "{result} running";
+          key = " Processes";
+          keyColor = osColor;
+        }
+        {
+          type = "command";
+          key = " Installed";
+          keyColor = osColor;
+          text = "LC_ALL=C date -d \"@$(stat -c %W /)\" \"+%d.%m.%Y %H:%M\" 2>/dev/null || echo N/A";
+        }
+        {
+          type = "command";
+          key = " OS Age";
+          keyColor = osColor;
+          text = "echo \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 )) days since install\"";
+        }
+        {
+          type = "uptime";
+          format = "{days}d {hours}h {minutes}m";
+          key = " Uptime";
           keyColor = osColor;
         }
         {
           type = "custom";
-          key = div;
+          key = "└────────────────────────────────────────────────────┘";
           keyColor = divColor;
         }
       ];
