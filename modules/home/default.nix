@@ -5,7 +5,6 @@
     # re-add the two lines below to bring it back.
     # inputs.spicetify-nix.homeManagerModules.default
     ./fastfetch
-    ./wallpaper-picker
     ./yazi
     ./starship.nix
     ./stylix.nix

@@ -82,14 +82,10 @@ in {
           keyColor = osColor;
         }
         {
-          type = "terminalfont";
-          format = "{name}";
-          key = " Font";
-          keyColor = osColor;
-        }
-        {
-          type = "shell";
-          format = "{exe-name}";
+          # Static on purpose: every detector reads the parent process
+          # (fetch) instead of the real shell under info_command.
+          type = "custom";
+          format = "zsh";
           key = " Shell";
           keyColor = osColor;
         }
