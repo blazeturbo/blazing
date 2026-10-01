@@ -43,11 +43,10 @@ in {
     })
   ];
 
-  # Stylix-derived kew theme (format per the kew-tip creator + upstream
-  # THEMES-HOWTO: `name=` header, then `key=#hex` lines).
-  # Monochrome on purpose: every role reads the SAME Stylix accent.
-  # One hue across all of kew, nothing else touched.
-  xdg.configFile."kew/themes/stylix.theme".text = let one = "#${c.base0D}"; in ''
+  # TEMP HARDCODED blazefetch blue (revert `one` to "#${c.base0D}"
+  # on wallpaper change). Monochrome on purpose: every role reads the
+  # SAME blue. One hue across all of kew, nothing else touched.
+  xdg.configFile."kew/themes/stylix.theme".text = let one = "#436694"; in ''
     # Theme generated from the Stylix palette on every rebuild.
     name=stylix
     author=blazing

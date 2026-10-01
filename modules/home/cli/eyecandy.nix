@@ -1,4 +1,6 @@
-# Eye-candy launchers, all on the Stylix palette:
+# Eye-candy launchers. Normally all on the Stylix palette (see below),
+# but TEMP HARDCODED to the blazefetch theme blue — revert the three
+# TEMP-marked pins on wallpaper change.
 # Kitty's colors 0-7 are Stylix base00/08/0B/0A/0D/0E/0C/05, so the Nix
 # code below picks the slot nearest the accent at build time — everything
 # follows wallpaper changes on rebuild, no exceptions.
@@ -33,6 +35,11 @@ let
   nearestIdx = lib.foldl' (
     best: i: if dist2 (builtins.elemAt ansiSlots i) < dist2 (builtins.elemAt ansiSlots best) then i else best
   ) 0 (lib.range 1 7);
+  # TEMP HARDCODE (revert to base0D tracking on wallpaper change):
+  # everything below is pinned to the blazefetch theme blue so lavat,
+  # cmatrix and tty-clock match it. The nearest-slot machinery is kept
+  # intact underneath for the revert.
+  hardBlueHex = "436694";
   # cmatrix only takes color names, so map the accent's nearest ANSI slot.
   cmatrixNames = [ "black" "red" "green" "yellow" "blue" "magenta" "cyan" "white" ];
   cmatrixColor = builtins.elemAt cmatrixNames nearestIdx;
@@ -49,16 +56,17 @@ let
         --replace '(int) rand() % randnum + randmin' '"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[rand() % 62]'
     '';
   });
-  # lavat takes hex without '#'; use the Stylix accent for both ends
-  # (uniform flat color, gradient flags kept).
-  lavatHex = lib.toUpper c.base0D;
+  # lavat takes hex without '#'. TEMP: pinned blazefetch blue
+  # (revert to `lib.toUpper c.base0D` on wallpaper change).
+  lavatHex = hardBlueHex;
 in {
   home.shellAliases = {
-    # Big centered clock with seconds, in the ANSI slot closest to the accent
-    tty-clock = "tty-clock -s -c -C${nearestANSI}";
-    # Matrix rain, bold, accent-colored, single color (patched heads)
-    cmatrix = "${cmatrixBlue}/bin/cmatrix -b -C ${cmatrixColor}";
-    # Lava lamp: flat Stylix accent, uniform, not a gradient.
+    # Big centered clock. TEMP: -C4 pinned blue (revert to -C${nearestANSI}).
+    tty-clock = "tty-clock -s -c -C4";
+    # Matrix rain, bold, accent-colored, single color (patched heads).
+    # TEMP: -C blue pinned (revert to -C ${cmatrixColor}).
+    cmatrix = "${cmatrixBlue}/bin/cmatrix -b -C blue";
+    # Lava lamp: flat blazefetch blue, uniform, not a gradient.
     lavat = "lavat -g -c ${lavatHex} -k ${lavatHex} -G";
   };
 }
