@@ -80,7 +80,9 @@ static void get_term_size(int *rows, int *cols) {
 
 #define ANIM_WIDTH 60
 #define MAX_HEIGHT 200
-#define GAP 2
+// Blazing: widened from upstream 2 — breathing room between the spinning
+// logo canvas and the info column.
+#define GAP 6
 
 static int render_height = 36;
 static int logo_height = 36;        // rows the logo may span (<= render_height)

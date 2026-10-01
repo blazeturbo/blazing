@@ -2,12 +2,16 @@
 let
   c = config.lib.stylix.colors;
 
-  # Accent-based: keys follow the Stylix accent (base0D), values follow
-  # the foreground (base05). Both update on wallpaper change at rebuild.
-  osColor = "#${c.base0D}";
-  # Dividers + headers follow the Stylix accent, values follow the
-  # foreground (near-white). No nerd icons, no profile row.
-  divColor = "#${c.base0D}";
+  # Theme blue, pinned to this wallpaper: dominant vivid swatch of
+  # wallpapers/noctalia.jpg (`magick wallpapers/noctalia.jpg -colors 16
+  # histogram:`). base0D currently resolves grey (#929aa7), so tracking
+  # it would keep headers+dividers grey — re-pick if the wallpaper
+  # changes. Values stay base05 (auto-tracked near-white).
+  themeBlue = "436694";
+  osColor = "#${themeBlue}";
+  # Dividers follow the theme blue, values follow the foreground
+  # (near-white). No nerd icons, no profile row.
+  divColor = "#${themeBlue}";
   # Plain divider (no nerd icons per request).
   div = "────────────────────────────────────────────";
 in {
@@ -19,7 +23,7 @@ in {
     settings = {
       display = {
         color = {
-          keys = "#${c.base0D}";
+          keys = "#${themeBlue}";
           output = "#${c.base05}";
         };
         separator = "";
