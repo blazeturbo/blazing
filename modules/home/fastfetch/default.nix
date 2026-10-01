@@ -5,9 +5,12 @@ let
   # Accent-based: keys follow the Stylix accent (base0D), values follow
   # the foreground (base05). Both update on wallpaper change at rebuild.
   osColor = "#${c.base0D}";
-  wmColor = "#${c.base0D}";
-  pcColor = "#${c.base0D}";
-  shColor = "#${c.base0D}";
+  # Values + dividers follow the foreground (near-white), like the
+  # reference rice: accent headers, white values.
+  fgColor = "#${c.base05}";
+  divColor = "#${c.base05}";
+  # Plain divider (no nerd icons per request).
+  div = "────────────────────────────────────────────";
 in {
   imports = [ ./blazefetch.nix ./jp2a.nix ];
 
@@ -18,16 +21,9 @@ in {
       display = {
         color = {
           keys = "#${c.base0D}";
-          output = "#${c.base0D}";
+          output = "#${c.base05}";
         };
-        separator = "  ";
-        key = {
-          width = 12;
-        };
-        # Colored % numbers like the reference (no bars, no palette row).
-        percent = {
-          type = 9;
-        };
+        separator = "";
       };
 
       logo = {
@@ -40,65 +36,104 @@ in {
         };
       };
 
-      # darius-style: flat icon-key rows, values aligned via key.width,
-      # no trees, no headers, no palette. fetch draws the title row.
+      # Block layout (reference rice, de-iconed): divider rows between
+      # accent header blocks with default white-ish values. No title/
+      # profile row, no nerd icons anywhere. fetch draws its own title.
       modules = [
         {
-          type = "os";
-          key = " distro";
-          keyColor = osColor;
-        }
-        {
-          type = "kernel";
-          key = " kernel";
-          keyColor = osColor;
-        }
-        {
-          type = "uptime";
-          key = " uptime";
-          keyColor = osColor;
-        }
-        {
-          type = "packages";
-          key = " packages";
-          keyColor = osColor;
-        }
-        {
-          type = "shell";
-          key = " shell";
-          keyColor = shColor;
-        }
-        {
-          type = "terminal";
-          key = " terminal";
-          keyColor = shColor;
-        }
-        {
-          type = "wm";
-          key = " wm";
-          keyColor = wmColor;
+          type = "custom";
+          key = div;
+          keyColor = divColor;
         }
         {
           type = "cpu";
-          format = "{1} ({3}) @ {7}";
-          key = " cpu";
-          keyColor = pcColor;
+          format = "";
+          key = "PROCS ";
+          keyColor = osColor;
         }
         {
           type = "gpu";
-          format = "{1} {2}";
-          key = " gpu";
-          keyColor = pcColor;
+          format = "";
+          key = "GRAPH ";
+          keyColor = osColor;
         }
         {
           type = "memory";
-          key = " memory";
-          keyColor = pcColor;
+          format = "";
+          key = "MEMRY ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
+        }
+        {
+          type = "os";
+          format = "{pretty-name}";
+          key = "OPSYS ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
+        }
+        {
+          type = "display";
+          format = "{inch}\" {refresh-rate}Hz {width}x{height} {name}";
+          key = "DISPY ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
+        }
+        {
+          type = "shell";
+          format = "{process-name} - {pretty-name}";
+          key = "SHELL ";
+          keyColor = osColor;
+        }
+        {
+          type = "terminal";
+          format = "{pretty-name}";
+          key = "TRMAL ";
+          keyColor = osColor;
+        }
+        {
+          type = "terminalfont";
+          format = "{name}";
+          key = "TRFNT ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
         }
         {
           type = "disk";
-          key = " disk";
-          keyColor = pcColor;
+          format = "";
+          key = "DISKS ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
+        }
+        {
+          type = "localip";
+          format = "{ifname} {ipv4}";
+          key = "IPADD ";
+          keyColor = osColor;
+        }
+        {
+          type = "custom";
+          key = div;
+          keyColor = divColor;
         }
       ];
     };
