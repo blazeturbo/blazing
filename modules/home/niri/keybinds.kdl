@@ -16,7 +16,7 @@ binds {
     Mod+Shift+V      hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
     Mod+Shift+Comma  hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "msg" "settings-toggle"; }
     Mod+X            hotkey-overlay-title="Noctalia Session menu" { spawn "noctalia" "msg" "panel-toggle" "session"; }
-    Mod+W            hotkey-overlay-title="Wallpaper picker" { spawn "noctalia" "msg" "panel-toggle" "wallpaper"; }
+    Mod+W            hotkey-overlay-title="Wallpaper picker" { spawn "wallpaper-flow"; }
 
     // Application Launchers
     Mod+Q            hotkey-overlay-title="Open Terminal: kitty" { spawn "kitty"; }
