@@ -9,7 +9,8 @@
 let
   flowSrc = pkgs.runCommand "wallpaper-flow-qml" { } ''
     mkdir -p $out/share/wallpaper-flow
-    cp -a ${./src} $out/share/wallpaper-flow
+    # Contents, not the dir itself: quickshell -p expects shell.qml at root.
+    cp -a ${./src}/. $out/share/wallpaper-flow/
   '';
   wallpaper-flow = pkgs.writeShellApplication {
     name = "wallpaper-flow";
