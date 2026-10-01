@@ -59,13 +59,20 @@ let
   # lavat takes hex without '#'. TEMP: pinned blazefetch blue
   # (revert to `lib.toUpper c.base0D` on wallpaper change).
   lavatHex = hardBlueHex;
+  # Neither binary takes hex — both render named blue through the terminal
+  # palette (Dank lavender-grey), so borrow OSC 4 around each run: redefine
+  # slots 4/12 to the theme blue first, restore Dank afterwards.
+  # Ctrl-C skips the restore (window keeps theme blue until restart —
+  # harmless, arguably on-brand). Revert: drop the printf bookends.
+  oscSet = "printf '\\033]4;4;#436694\\033\\\\'; printf '\\033]4;12;#436694\\033\\\\'";
+  oscRestore = "printf '\\033]4;4;#bca5f2\\033\\\\'; printf '\\033]4;12;#d7c6ff\\033\\\\'";
 in {
   home.shellAliases = {
     # Big centered clock. TEMP: -C4 pinned blue (revert to -C${nearestANSI}).
-    tty-clock = "tty-clock -s -c -C4";
+    tty-clock = "${oscSet}; command tty-clock -s -c -C4; ${oscRestore}";
     # Matrix rain, bold, accent-colored, single color (patched heads).
     # TEMP: -C blue pinned (revert to -C ${cmatrixColor}).
-    cmatrix = "${cmatrixBlue}/bin/cmatrix -b -C blue";
+    cmatrix = "${oscSet}; ${cmatrixBlue}/bin/cmatrix -b -C blue; ${oscRestore}";
     # Lava lamp: flat blazefetch blue, uniform, not a gradient.
     lavat = "lavat -g -c ${lavatHex} -k ${lavatHex} -G";
   };
