@@ -5,10 +5,9 @@ let
   # Accent-based: keys follow the Stylix accent (base0D), values follow
   # the foreground (base05). Both update on wallpaper change at rebuild.
   osColor = "#${c.base0D}";
-  # Values + dividers follow the foreground (near-white), like the
-  # reference rice: accent headers, white values.
-  fgColor = "#${c.base05}";
-  divColor = "#${c.base05}";
+  # Dividers + headers follow the Stylix accent, values follow the
+  # foreground (near-white). No nerd icons, no profile row.
+  divColor = "#${c.base0D}";
   # Plain divider (no nerd icons per request).
   div = "────────────────────────────────────────────";
 in {
@@ -47,13 +46,13 @@ in {
         }
         {
           type = "cpu";
-          format = "";
+          format = "{name}";
           key = "PROCS ";
           keyColor = osColor;
         }
         {
           type = "gpu";
-          format = "";
+          format = "{vendor} {name}";
           key = "GRAPH ";
           keyColor = osColor;
         }
@@ -115,7 +114,7 @@ in {
         }
         {
           type = "disk";
-          format = "";
+          format = "{size-used} / {size-total}";
           key = "DISKS ";
           keyColor = osColor;
         }
