@@ -59,7 +59,7 @@ in {
         }
         {
           type = "os";
-          format = "{pretty-name} {arch}";
+          format = "{pretty-name}";
           key = " OS";
           keyColor = osColor;
         }
@@ -77,7 +77,7 @@ in {
         }
         {
           type = "terminal";
-          format = "{pretty-name} {version}";
+          format = "{pretty-name}";
           key = " Terminal";
           keyColor = osColor;
         }
@@ -89,7 +89,7 @@ in {
         }
         {
           type = "shell";
-          format = "{pretty-name}";
+          format = "{exe-name}";
           key = " Shell";
           keyColor = osColor;
         }

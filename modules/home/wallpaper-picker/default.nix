@@ -12,10 +12,19 @@ let
     # Contents, not the dir itself: quickshell -p expects shell.qml at root.
     cp -a ${./src}/. $out/share/wallpaper-flow/
   '';
+  # quickshell alone lacks the QtMultimedia QML module the picker's video
+  # hover-previews import (harmless without videos, fatal at load without
+  # the module present). Wrap it with the module on the import path.
+  qsWrapped = pkgs.runCommand "quickshell-wrapped" {
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+  } ''
+    mkdir -p $out/bin
+    makeWrapper ${pkgs.quickshell}/bin/quickshell $out/bin/quickshell \
+      --prefix QML2_IMPORT_PATH : ${pkgs.qt6.qtmultimedia}/lib/qt-6/qml
+  '';
   wallpaper-flow = pkgs.writeShellApplication {
     name = "wallpaper-flow";
     runtimeInputs = with pkgs; [
-      quickshell
       bash
       coreutils
       findutils
@@ -32,7 +41,7 @@ let
       QMLDIR="${flowSrc}/share/wallpaper-flow"
       # Thumbnail/color-marker cache first (no-op after the first run).
       bash "$QMLDIR/prepare-thumbs.sh" >/dev/null 2>&1 || true
-      exec quickshell -p "$QMLDIR"
+      exec ${qsWrapped}/bin/quickshell -p "$QMLDIR"
     '';
   };
 in
