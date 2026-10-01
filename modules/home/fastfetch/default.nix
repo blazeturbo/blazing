@@ -89,7 +89,7 @@ in {
         }
         {
           type = "shell";
-          format = "{pretty-name} {version}";
+          format = "{pretty-name}";
           key = " Shell";
           keyColor = osColor;
         }
