@@ -2,12 +2,13 @@
 let
   c = config.lib.stylix.colors;
 
-  # Theme blue, pinned to this wallpaper: dominant vivid swatch of
-  # wallpapers/noctalia.jpg (`magick wallpapers/noctalia.jpg -colors 16
-  # histogram:`). base0D currently resolves grey (#929aa7), so tracking
-  # it would keep headers+dividers grey — re-pick if the wallpaper
-  # changes. Values stay base05 (auto-tracked near-white).
+  # Theme blues, pinned to this wallpaper: dominant vivid swatch
+  # (#436694) for headers/borders, light swatch (#9CB1C7) for values —
+  # both from `magick wallpapers/noctalia.jpg -colors 16 histogram:`.
+  # base0D currently resolves grey (#929aa7), so tracking it would keep
+  # everything grey — re-pick both if the wallpaper changes.
   themeBlue = "436694";
+  themeBlueLight = "9CB1C7";
   osColor = "#${themeBlue}";
   # Dividers follow the theme blue, values follow the foreground
   # (near-white). No nerd icons, no profile row.
@@ -23,7 +24,7 @@ in {
       display = {
         color = {
           keys = "#${themeBlue}";
-          output = "#${c.base05}";
+          output = "#${themeBlueLight}";
         };
         separator = " ";
         size = {
@@ -55,6 +56,7 @@ in {
         }
         {
           type = "title";
+          format = "{user-name}";
           key = " User";
           keyColor = osColor;
         }
