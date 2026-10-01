@@ -53,13 +53,14 @@ in
     # Spin: xy rotation at 1.6x speed (default 1.0)
     spin=xy
     speed=1.6
-    # Logo in 256-color 67 (~#436694, the pinned theme blue): named colors
-    # resolve through the terminal palette (blue renders lavender under
-    # Dank), so pin the number to stay in the Stylix family with the info.
-    # Shape, spin, speed and shading untouched.
+    # Logo in 256-color 67 (~#436694, the pinned theme blue): fetch wraps
+    # the value as \033[1;<val>m, so a bare 67 yields invalid SGR 1;67
+    # (terminal falls back to white) — the full 38;5;67 form is required
+    # for 1;38;5;67m. Same number both faces: uniform blue, depth comes
+    # from the ascii shading ramp. Shape, spin, speed untouched.
     label_color=${accentName}
-    logo_outer=67
-    logo_inner=67
+    logo_outer=38;5;67
+    logo_inner=38;5;67
   '';
 
   # Custom logo from ~/Downloads/logo.avif (740x740): converted with temp
