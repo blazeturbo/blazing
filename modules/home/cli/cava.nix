@@ -1,5 +1,6 @@
-# Cava audio visualizer: solid Stylix blue (base0D), no gradient.
-# Shape: thin bars, full height, smooth physics.
+# Cava audio visualizer: solid theme blue, no gradient.
+# TEMP HARDCODED blazefetch blue (revert to '#${c.base0D}' on wallpaper
+# change). Shape: thin bars, full height, smooth physics.
 { config, ... }:
 let
   c = config.lib.stylix.colors;
@@ -21,7 +22,7 @@ in {
         noise_reduction = 88; # buttery slow hill instead of spiky noise
       };
       color = {
-        foreground = "'#${c.base0D}'"; # solid stylix blue, no gradient
+        foreground = "'#436694'"; # TEMP pinned theme blue, no gradient
       };
     };
   };

@@ -2,16 +2,13 @@
 let
   c = config.lib.stylix.colors;
 
-  # Theme blues, pinned to this wallpaper: dominant vivid swatch
-  # (#436694) for headers/borders, light swatch (#9CB1C7) for values —
-  # both from `magick wallpapers/noctalia.jpg -colors 16 histogram:`.
-  # base0D currently resolves grey (#929aa7), so tracking it would keep
-  # everything grey — re-pick both if the wallpaper changes.
+  # Theme blue, pinned to this wallpaper: dominant vivid swatch
+  # (#436694) from `magick wallpapers/noctalia.jpg -colors 16 histogram:`.
+  # base0D currently resolves grey (#929aa7) — re-pick if the wallpaper
+  # changes. Single blue everywhere: headers, borders AND values.
   themeBlue = "436694";
-  themeBlueLight = "9CB1C7";
   osColor = "#${themeBlue}";
-  # Dividers follow the theme blue, values follow the foreground
-  # (near-white). No nerd icons, no profile row.
+  # Dividers follow the theme blue. No nerd icons, no profile row.
   divColor = "#${themeBlue}";
 in {
   imports = [ ./blazefetch.nix ./jp2a.nix ];
@@ -24,7 +21,7 @@ in {
       display = {
         color = {
           keys = "#${themeBlue}";
-          output = "#${themeBlueLight}";
+          output = "#${themeBlue}";
         };
         separator = " ";
         size = {
@@ -44,7 +41,7 @@ in {
       };
 
       # Boxed layout: System / Hardware boxes with theme-blue borders +
-      # headers, white values. Title (astrid@nixos) is the first row inside
+      # headers, everything one blue. Title (astrid) is the first row inside
       # System — fetch's native title row is off (title=0 in fetch config).
       # No packages/disk/swap/Status: keeps the panel narrow enough that
       # the spinning logo stays visible beside it.
