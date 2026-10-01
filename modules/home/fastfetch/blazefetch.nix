@@ -37,33 +37,36 @@ in
 {
   home.packages = [ fetch-patched ];
 
-  # fetch reads ~/.config/fetch/config. Title row stays native,
-  # everything below it is `fastfetch --logo none` (our custom modules).
+  # fetch reads ~/.config/fetch/config. Native title row is OFF
+  # (title=0): astrid@nixos comes from our fastfetch title module, first
+  # row inside the System box. Everything else is `fastfetch --logo none`.
   xdg.configFile."fetch/config".text = ''
     # Info panel source: our fastfetch setup (its own logo disabled,
     # fetch draws the spinning 3D logo itself).
     # --pipe false forces colors on: areofyl captures this through a pipe,
     # and fastfetch strips colors when piped unless told otherwise.
     info_command=fastfetch --logo none --pipe false
+    # No native user@host row (it lives in the System box now).
+    title=0
     # Render height (rows)
     height=27
     # Spin: xy rotation at 1.6x speed (default 1.0)
     spin=xy
     speed=1.6
-    # Stylix accent (nearest named color to base0D #${c.base0D}).
-    # Whole logo in the accent slot: uniform, palette-tracked, never
-    # hardcoded. Shape, spin, speed and shading untouched.
+    # Logo in 256-color 67 (~#436694, the pinned theme blue): named colors
+    # resolve through the terminal palette (blue renders lavender under
+    # Dank), so pin the number to stay in the Stylix family with the info.
+    # Shape, spin, speed and shading untouched.
     label_color=${accentName}
-    logo_outer=${accentName}
-    logo_inner=${accentName}
+    logo_outer=67
+    logo_inner=67
   '';
 
   # Custom logo from ~/Downloads/logo.avif (740x740): converted with temp
   # nix-shell ffmpeg (avif -> JPEG) then vendored `blaze jp2a`
   # (`jp2a --width=60 -i`, inverted so the emblem pops on dark terminals).
   # No `# distro:` line on purpose — without it fetch uses
-  # logo_outer/logo_inner above, so the logo stays uniform Stylix-accent
-  # tracked. Mixed weights (spaces . , ; : l o x k O 0) give the 3D relief
+  # logo_outer/logo_inner above (pinned 67, theme-blue family). Mixed weights (spaces . , ; : l o x k O 0) give the 3D relief
   # depth; shading stays ascii, spin untouched. Re-run the pipeline any
   # time: ffmpeg -i ~/Downloads/logo.avif /tmp/logo.jpg &&
   # blaze jp2a --width=60 -i /tmp/logo.jpg

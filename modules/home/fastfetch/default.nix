@@ -42,15 +42,21 @@ in {
         };
       };
 
-      # Boxed layout (reference rice, de-iconed): System / Hardware /
-      # Status boxes with theme-blue borders + headers, white values.
-      # No title/profile row, no nerd icons, no battery (desktop).
-      # fetch draws its own title row above this.
+      # Boxed layout: System / Hardware boxes with theme-blue borders +
+      # headers, white values. Title (astrid@nixos) is the first row inside
+      # System — fetch's native title row is off (title=0 in fetch config).
+      # No packages/disk/swap/Status: keeps the panel narrow enough that
+      # the spinning logo stays visible beside it.
       modules = [
         {
           type = "custom";
           key = "┌────────────────────── System ──────────────────────┐";
           keyColor = divColor;
+        }
+        {
+          type = "title";
+          key = " User";
+          keyColor = osColor;
         }
         {
           type = "os";
@@ -89,12 +95,6 @@ in {
           keyColor = osColor;
         }
         {
-          type = "packages";
-          format = "{appimage} (appimage), {flatpak-all} (flatpak), {nix-system} (nix-system), {nix-user} (nix-user)";
-          key = " Packages";
-          keyColor = osColor;
-        }
-        {
           type = "custom";
           key = "└────────────────────────────────────────────────────┘";
           keyColor = divColor;
@@ -130,61 +130,8 @@ in {
         }
         {
           type = "memory";
-          format = "{used} / {total} ({percentage})";
+          format = "{used} / {total}";
           key = " Memory";
-          keyColor = osColor;
-        }
-        {
-          type = "swap";
-          format = "{used} / {total} ({percentage})";
-          key = " Swap";
-          keyColor = osColor;
-        }
-        {
-          type = "disk";
-          format = "{size-used} / {size-total} ({size-percentage}) - {filesystem} [{mountpoint}]";
-          folders = [ "/" ];
-          key = " Disk";
-          keyColor = osColor;
-        }
-        {
-          type = "custom";
-          key = "└────────────────────────────────────────────────────┘";
-          keyColor = divColor;
-        }
-        {
-          type = "custom";
-          key = "┌────────────────────── Status ──────────────────────┐";
-          keyColor = divColor;
-        }
-        {
-          type = "datetime";
-          format = "{day-in-month}.{month-pretty}.{year} {hour-pretty}:{minute-pretty}:{second-pretty}";
-          key = " Date";
-          keyColor = osColor;
-        }
-        {
-          type = "processes";
-          format = "{result} running";
-          key = " Processes";
-          keyColor = osColor;
-        }
-        {
-          type = "command";
-          key = " Installed";
-          keyColor = osColor;
-          text = "LC_ALL=C date -d \"@$(stat -c %W /)\" \"+%d.%m.%Y %H:%M\" 2>/dev/null || echo N/A";
-        }
-        {
-          type = "command";
-          key = " OS Age";
-          keyColor = osColor;
-          text = "echo \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 )) days since install\"";
-        }
-        {
-          type = "uptime";
-          format = "{days}d {hours}h {minutes}m";
-          key = " Uptime";
           keyColor = osColor;
         }
         {

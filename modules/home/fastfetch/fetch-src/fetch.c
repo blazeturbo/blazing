@@ -914,6 +914,7 @@ static float config_speed = 0.0f; // 0 = use flag/default
 static int config_spin_x = -1;    // -1 = use flag/default
 static int config_spin_y = -1;
 static int config_box = 0;        // 0 = off (default), 1 = on
+static int config_title = 1;      // 1 = native user@host row (default), 0 = off (title comes from info_command, e.g. inside a box)
 static char config_shading[128] = "";
 static char config_shading_mode[16] = "";
 static char config_separator[8] = "-";
@@ -1065,6 +1066,15 @@ static void load_config(void) {
                     strcasecmp(val, "yes") == 0 || strcasecmp(val, "true") == 0)
                        ? 1
                        : 0;
+      continue;
+    }
+    if (strncmp(line, "title=", 6) == 0) {
+      char *val = line + 6;
+      strip_inline_hint(val);
+      config_title = (strcmp(val, "1") == 0 || strcasecmp(val, "y") == 0 ||
+                      strcasecmp(val, "yes") == 0 || strcasecmp(val, "true") == 0)
+                         ? 1
+                         : 0;
       continue;
     }
     if (strncmp(line, "shading=", 8) == 0) {
@@ -4339,7 +4349,8 @@ int main(int argc, char **argv) {
     field_line[i] = -1;
 
   if (show_info) {
-    gather_title();
+    if (config_title)
+      gather_title();
     if (config_info_command[0]) {
       // Custom info source: use the command's output lines as the
       // info panel instead of the native gatherers.
